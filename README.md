@@ -1017,7 +1017,6 @@ This project is licensed under the **GNU General Public License v3.0** - see the
 - **📖 Documentation**: Read this README and inline code docs
 - **🐛 Bug Reports**: [GitHub Issues](https://github.com/MichTronics76/hammumble/issues)
 - **💬 Discussions**: [GitHub Discussions](https://github.com/MichTronics/hammumble/discussions)
-- **📧 Email**: hammumble.support@example.com
 
 ### Community
 
@@ -1028,7 +1027,7 @@ This project is licensed under the **GNU General Public License v3.0** - see the
 ### Professional Support
 
 For commercial deployments, custom features, or professional support:
-- Email: commercial@example.com
+- Email: info@cbjunkies.nl
 - Include: Organization name, use case, requirements
 
 ---
