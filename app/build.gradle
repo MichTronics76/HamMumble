@@ -31,17 +31,16 @@ android {
 
     signingConfigs {
         release {
-            // Voor security: gebruik gradle.properties of environment variables
-            // storeFile file("../hammumble-release.keystore")
-            // storePassword System.getenv("KEYSTORE_PASSWORD") ?: project.findProperty("KEYSTORE_PASSWORD")
-            // keyAlias "hammumble"
-            // keyPassword System.getenv("KEY_PASSWORD") ?: project.findProperty("KEY_PASSWORD")
+            storeFile file("../hammumble-release.keystore")
+            storePassword "MiHammumble2024!!"
+            keyAlias "hammumble"
+            keyPassword "MiHammumble2024!!"
         }
     }
 
     buildTypes {
         release {
-            // signingConfig signingConfigs.release  // Uncomment after keystore setup
+            signingConfig signingConfigs.release
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }

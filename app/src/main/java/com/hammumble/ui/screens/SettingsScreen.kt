@@ -547,14 +547,14 @@ fun SettingsScreen(
                     Card(
                         modifier = Modifier.fillMaxWidth(),
                         colors = CardDefaults.cardColors(
-                            containerColor = MaterialTheme.colorScheme.secondaryContainer
+                            containerColor = MaterialTheme.colorScheme.tertiaryContainer
                         )
                     ) {
                         Text(
                             modifier = Modifier.padding(12.dp),
                             text = "VOX pre-tone plays an inaudible 20kHz tone before your voice transmission starts. This triggers the VOX circuit on your radio transmitter, ensuring it's already open when you start speaking. Prevents clipping of first syllables!",
                             style = MaterialTheme.typography.bodySmall,
-                            color = MaterialTheme.colorScheme.onSecondaryContainer
+                            color = MaterialTheme.colorScheme.onPrimaryContainer
                         )
                     }
                     
@@ -713,7 +713,7 @@ fun SettingsScreen(
                             Text(
                                 text = "Transmitter roger beep plays locally when OTHER users in your channel stop talking (after voice hold timer). Perfect for repeater/gateway setups.",
                                 style = MaterialTheme.typography.bodySmall,
-                                color = MaterialTheme.colorScheme.onTertiaryContainer
+                                color = MaterialTheme.colorScheme.onPrimaryContainer
                             )
                         }
                     }
@@ -1015,7 +1015,7 @@ fun SettingsScreen(
                     // Info banner
                     Card(
                         colors = CardDefaults.cardColors(
-                            containerColor = MaterialTheme.colorScheme.secondaryContainer
+                            containerColor = MaterialTheme.colorScheme.tertiaryContainer
                         ),
                         modifier = Modifier.fillMaxWidth()
                     ) {
@@ -1031,7 +1031,7 @@ fun SettingsScreen(
                             Text(
                                 text = "This roger beep is SENT to Mumble when YOU stop talking (after your voice hold timer). Other users will hear it.",
                                 style = MaterialTheme.typography.bodySmall,
-                                color = MaterialTheme.colorScheme.onSecondaryContainer
+                                color = MaterialTheme.colorScheme.onPrimaryContainer
                             )
                         }
                     }
@@ -1333,7 +1333,7 @@ fun SettingsScreen(
                     // Info banner explaining the feature
                     Card(
                         colors = CardDefaults.cardColors(
-                            containerColor = MaterialTheme.colorScheme.primaryContainer
+                            containerColor = MaterialTheme.colorScheme.tertiaryContainer
                         ),
                         modifier = Modifier.fillMaxWidth()
                     ) {
