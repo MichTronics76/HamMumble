@@ -1,0 +1,1011 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HamMumble - Professional VoIP Communication for Ham Radio Operators</title>
+    <meta name="description" content="HamMumble - A modern, feature-rich Mumble VoIP client specifically designed for ham radio operators. Built with cutting-edge Android technology.">
+    <meta name="keywords" content="HamMumble, Mumble, VoIP, Ham Radio, Amateur Radio, Android, PTT, Communication">
+    <meta name="author" content="PD4MV Michel van Veen">
+    
+    <!-- INSTRUCTIONS FOR WORDPRESS/ELEMENTOR IMPLEMENTATION
+    
+    ╔══════════════════════════════════════════════════════════════════════════════╗
+    ║                    HAMMUMBLE WORDPRESS/ELEMENTOR SETUP                       ║
+    ╚══════════════════════════════════════════════════════════════════════════════╝
+    
+    📋 QUICK START GUIDE
+    ════════════════════════════════════════════════════════════════════════════
+    
+    METHOD 1: Preview as Standalone Page
+    ─────────────────────────────────────
+    1. Open this file in your web browser
+    2. Review the design and functionality
+    3. Use as reference for Elementor build
+    
+    METHOD 2: Import to WordPress (Recommended)
+    ────────────────────────────────────────────
+    
+    STEP 1: Prepare WordPress
+    ──────────────────────────
+    • Install Elementor (Free or Pro)
+    • Go to Appearance → Customize → Additional CSS
+    • Copy all CSS from <style> section below
+    • Paste into Additional CSS
+    • Click "Publish"
+    
+    STEP 2: Upload Logo
+    ────────────────────
+    • Go to Media → Add New
+    • Upload the HamMumble logo image (attached)
+    • Note the image URL for later use
+    
+    STEP 3: Create New Page
+    ────────────────────────
+    • Pages → Add New
+    • Title: "HamMumble"
+    • Click "Edit with Elementor"
+    • Set Page Layout to "Elementor Full Width"
+    • Hide page title in Page Settings
+    
+    STEP 4: Build Sections in Elementor
+    ────────────────────────────────────
+    
+    Use the HTML structure below as your guide. For each section:
+    
+    🎨 HERO SECTION
+    • Add Section → 2 Columns (50/50)
+    • Background Color: #0A0E1A
+    • CSS Classes: hammumble-hero hammumble-radial-bg
+    • Padding: 80px top, 120px bottom
+    • Left Column: Heading + Text + Buttons
+    • Right Column: Image (logo) with class hammumble-logo-glow
+    
+    📊 STATS SECTION
+    • Add Section → 4 Columns (25/25/25/25)
+    • Background: #1A1F2E
+    • Each column: Counter widget
+    • CSS Class: hammumble-stat-item
+    
+    ✨ FEATURES SECTION
+    • Add Section → Background #0A0E1A
+    • Inner Section → 3 Columns
+    • Each column: Icon Box widget
+    • CSS Class: hammumble-feature-card
+    
+    💻 TECHNOLOGY SECTION
+    • Add Section → 2 Columns
+    • Background: #1A1F2E
+    • Left: Text content
+    • Right: Grid of tech items
+    
+    🎯 USE CASES SECTION
+    • Add Section → 2x2 Grid (use inner sections)
+    • Background: #0A0E1A
+    • CSS Class: hammumble-usecase-card
+    
+    📢 CTA SECTION
+    • Add Section → 1 Column (centered)
+    • CSS Class: hammumble-animated-bg
+    • Add heading + text + buttons
+    
+    📄 FOOTER
+    • Add Section → 4 Columns
+    • Background: #0A0E1A
+    • Text widgets for each column
+    
+    
+    🎨 COLOR PALETTE (From Logo)
+    ════════════════════════════════════════════════════════════════════════════
+    Primary Orange:  #FFA500  ◼ Main CTAs, headings, accents
+    Primary Blue:    #0096D6  ◼ Secondary elements, tech focus
+    Primary Green:   #2ECC71  ◼ Success states, checkmarks
+    Dark Background: #0A0E1A  ◼ Main background
+    Dark Card:       #1A1F2E  ◼ Card backgrounds
+    Dark Accent:     #252B3F  ◼ Accent backgrounds
+    Text Light:      #FFFFFF  ◼ Primary text
+    Text Muted:      #B4B8C5  ◼ Secondary text
+    Text Dim:        #6B7280  ◼ Tertiary text
+    
+    
+    🔧 CUSTOM CSS CLASSES FOR ELEMENTOR
+    ════════════════════════════════════════════════════════════════════════════
+    
+    Apply these classes in Elementor's "Advanced" tab → CSS Classes:
+    
+    • hammumble-gradient-text     → Gradient heading effect
+    • hammumble-btn-primary        → Orange gradient button
+    • hammumble-btn-secondary      → Blue outline button
+    • hammumble-feature-card       → Feature card with hover
+    • hammumble-stat-item          → Stats counter card
+    • hammumble-tech-badge         → Technology badge
+    • hammumble-usecase-card       → Use case card
+    • hammumble-animated-bg        → Animated background
+    • hammumble-feature-list       → List with checkmarks
+    • hammumble-logo-glow          → Logo glow effect
+    • hammumble-card               → Generic card
+    • hammumble-radial-bg          → Radial gradient background
+    
+    
+    📱 RESPONSIVE DESIGN
+    ════════════════════════════════════════════════════════════════════════════
+    All styles are mobile-responsive. Test on:
+    • Desktop:  1920px+
+    • Laptop:   1200px
+    • Tablet:   768px
+    • Mobile:   375px
+    
+    
+    ⚡ PERFORMANCE TIPS
+    ════════════════════════════════════════════════════════════════════════════
+    • Optimize logo image (use WebP format)
+    • Minify CSS in production
+    • Use caching plugin
+    • Enable lazy loading for images
+    • Test with Google PageSpeed Insights
+    
+    
+    🎯 CUSTOMIZATION
+    ════════════════════════════════════════════════════════════════════════════
+    To change colors globally:
+    1. Find CSS variables in :root { }
+    2. Replace hex values with your colors
+    3. Save and refresh
+    
+    To modify spacing:
+    • Adjust padding values in section settings
+    • Desktop: 100px / Tablet: 60px / Mobile: 40px
+    
+    To update content:
+    • Copy text from HTML sections below
+    • Paste into Elementor widgets
+    • Maintain CSS classes for styling
+    
+    
+    📞 SUPPORT & LICENSE
+    ════════════════════════════════════════════════════════════════════════════
+    Created for: HamMumble Project
+    Author:      PD4MV Michel van Veen
+    License:     GPL-3.0
+    Version:     1.0.0
+    Date:        October 18, 2025
+    
+    For questions or customization help:
+    • GitHub: [Your GitHub Repository]
+    • Email:  [Your Contact Email]
+    
+    ══════════════════════════════════════════════════════════════════════════════
+    END OF INSTRUCTIONS - CSS STARTS BELOW
+    ══════════════════════════════════════════════════════════════════════════════
+    -->
+    
+    <style>
+        /* Color Palette from Logo */
+        :root {
+            --primary-orange: #FFA500;
+            --primary-blue: #0096D6;
+            --primary-green: #2ECC71;
+            --dark-bg: #0A0E1A;
+            --dark-card: #1A1F2E;
+            --dark-accent: #252B3F;
+            --text-light: #FFFFFF;
+            --text-muted: #B4B8C5;
+            --text-dim: #6B7280;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--dark-bg);
+            color: var(--text-light);
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        /* Header Section */
+        .hero-section {
+            background: linear-gradient(135deg, var(--dark-bg) 0%, var(--dark-accent) 100%);
+            padding: 80px 0 120px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: radial-gradient(circle at 20% 50%, rgba(0, 150, 214, 0.1) 0%, transparent 50%),
+                        radial-gradient(circle at 80% 80%, rgba(255, 165, 0, 0.1) 0%, transparent 50%);
+            pointer-events: none;
+        }
+
+        .hero-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 60px;
+            align-items: center;
+            position: relative;
+            z-index: 1;
+        }
+
+        .hero-text h1 {
+            font-size: 3.5rem;
+            font-weight: 700;
+            margin-bottom: 20px;
+            background: linear-gradient(135deg, var(--primary-orange) 0%, var(--primary-blue) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .hero-text .tagline {
+            font-size: 1.5rem;
+            color: var(--text-muted);
+            margin-bottom: 30px;
+            font-weight: 300;
+        }
+
+        .hero-text p {
+            font-size: 1.1rem;
+            color: var(--text-dim);
+            margin-bottom: 40px;
+            line-height: 1.8;
+        }
+
+        .hero-logo {
+            text-align: center;
+            padding: 40px;
+            background: var(--dark-card);
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+        }
+
+        .hero-logo img {
+            max-width: 100%;
+            height: auto;
+            filter: drop-shadow(0 10px 30px rgba(255, 165, 0, 0.3));
+        }
+
+        .cta-buttons {
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 16px 40px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary-orange) 0%, #ff8800 100%);
+            color: var(--text-light);
+            box-shadow: 0 10px 30px rgba(255, 165, 0, 0.3);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 40px rgba(255, 165, 0, 0.4);
+        }
+
+        .btn-secondary {
+            background: transparent;
+            color: var(--primary-blue);
+            border: 2px solid var(--primary-blue);
+        }
+
+        .btn-secondary:hover {
+            background: var(--primary-blue);
+            color: var(--text-light);
+            transform: translateY(-3px);
+        }
+
+        /* Stats Section */
+        .stats-section {
+            padding: 60px 0;
+            background: var(--dark-card);
+            margin-top: -60px;
+            position: relative;
+            z-index: 2;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 40px;
+            text-align: center;
+        }
+
+        .stat-item {
+            padding: 30px;
+            background: var(--dark-accent);
+            border-radius: 15px;
+            border: 1px solid rgba(255, 165, 0, 0.1);
+            transition: all 0.3s ease;
+        }
+
+        .stat-item:hover {
+            transform: translateY(-5px);
+            border-color: var(--primary-orange);
+            box-shadow: 0 10px 30px rgba(255, 165, 0, 0.2);
+        }
+
+        .stat-number {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--primary-orange);
+            margin-bottom: 10px;
+        }
+
+        .stat-label {
+            font-size: 1rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        /* Features Section */
+        .features-section {
+            padding: 100px 0;
+            background: var(--dark-bg);
+        }
+
+        .section-header {
+            text-align: center;
+            margin-bottom: 80px;
+        }
+
+        .section-header h2 {
+            font-size: 2.8rem;
+            font-weight: 700;
+            margin-bottom: 20px;
+            color: var(--text-light);
+        }
+
+        .section-header .highlight {
+            color: var(--primary-orange);
+        }
+
+        .section-header p {
+            font-size: 1.2rem;
+            color: var(--text-dim);
+            max-width: 700px;
+            margin: 0 auto;
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 40px;
+        }
+
+        .feature-card {
+            background: var(--dark-card);
+            padding: 40px;
+            border-radius: 20px;
+            border: 1px solid rgba(255, 165, 0, 0.1);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .feature-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: linear-gradient(90deg, var(--primary-orange), var(--primary-blue));
+            transform: scaleX(0);
+            transition: transform 0.3s ease;
+        }
+
+        .feature-card:hover::before {
+            transform: scaleX(1);
+        }
+
+        .feature-card:hover {
+            transform: translateY(-10px);
+            border-color: var(--primary-orange);
+            box-shadow: 0 20px 50px rgba(255, 165, 0, 0.2);
+        }
+
+        .feature-icon {
+            font-size: 3rem;
+            margin-bottom: 20px;
+        }
+
+        .feature-card h3 {
+            font-size: 1.5rem;
+            margin-bottom: 15px;
+            color: var(--text-light);
+        }
+
+        .feature-card p {
+            color: var(--text-dim);
+            line-height: 1.8;
+        }
+
+        .feature-list {
+            list-style: none;
+            margin-top: 20px;
+        }
+
+        .feature-list li {
+            padding: 8px 0;
+            color: var(--text-muted);
+            position: relative;
+            padding-left: 25px;
+        }
+
+        .feature-list li::before {
+            content: '✓';
+            position: absolute;
+            left: 0;
+            color: var(--primary-green);
+            font-weight: bold;
+        }
+
+        /* Technology Section */
+        .technology-section {
+            padding: 100px 0;
+            background: var(--dark-card);
+        }
+
+        .tech-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 60px;
+            align-items: center;
+        }
+
+        .tech-content h3 {
+            font-size: 2.2rem;
+            margin-bottom: 20px;
+            color: var(--primary-blue);
+        }
+
+        .tech-content p {
+            font-size: 1.1rem;
+            color: var(--text-dim);
+            margin-bottom: 30px;
+            line-height: 1.8;
+        }
+
+        .tech-badges {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin-top: 30px;
+        }
+
+        .tech-badge {
+            padding: 12px 24px;
+            background: var(--dark-accent);
+            border: 1px solid var(--primary-blue);
+            border-radius: 50px;
+            color: var(--primary-blue);
+            font-size: 0.9rem;
+            font-weight: 600;
+        }
+
+        .tech-visual {
+            background: var(--dark-accent);
+            padding: 40px;
+            border-radius: 20px;
+            border: 1px solid rgba(0, 150, 214, 0.2);
+        }
+
+        .tech-stack {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+        }
+
+        .tech-item {
+            background: var(--dark-bg);
+            padding: 20px;
+            border-radius: 10px;
+            border-left: 3px solid var(--primary-orange);
+            transition: all 0.3s ease;
+        }
+
+        .tech-item:hover {
+            transform: translateX(10px);
+            border-left-color: var(--primary-blue);
+        }
+
+        .tech-item h4 {
+            color: var(--text-light);
+            margin-bottom: 8px;
+            font-size: 1.1rem;
+        }
+
+        .tech-item p {
+            color: var(--text-dim);
+            font-size: 0.9rem;
+        }
+
+        /* Use Cases Section */
+        .usecases-section {
+            padding: 100px 0;
+            background: var(--dark-bg);
+        }
+
+        .usecases-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 40px;
+        }
+
+        .usecase-card {
+            background: linear-gradient(135deg, var(--dark-card) 0%, var(--dark-accent) 100%);
+            padding: 50px;
+            border-radius: 20px;
+            border: 1px solid rgba(255, 165, 0, 0.1);
+            transition: all 0.3s ease;
+        }
+
+        .usecase-card:hover {
+            transform: scale(1.02);
+            border-color: var(--primary-orange);
+            box-shadow: 0 20px 60px rgba(255, 165, 0, 0.2);
+        }
+
+        .usecase-card h3 {
+            font-size: 1.8rem;
+            margin-bottom: 20px;
+            color: var(--primary-orange);
+        }
+
+        .usecase-card p {
+            color: var(--text-muted);
+            line-height: 1.8;
+            font-size: 1.05rem;
+        }
+
+        /* CTA Section */
+        .cta-section {
+            padding: 100px 0;
+            background: linear-gradient(135deg, var(--dark-card) 0%, var(--dark-accent) 100%);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .cta-section::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255, 165, 0, 0.1) 0%, transparent 70%);
+            animation: pulse 15s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); opacity: 0.5; }
+            50% { transform: scale(1.1); opacity: 0.8; }
+        }
+
+        .cta-content {
+            text-align: center;
+            position: relative;
+            z-index: 1;
+        }
+
+        .cta-content h2 {
+            font-size: 3rem;
+            margin-bottom: 20px;
+            background: linear-gradient(135deg, var(--primary-orange) 0%, var(--primary-blue) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .cta-content p {
+            font-size: 1.3rem;
+            color: var(--text-muted);
+            margin-bottom: 40px;
+        }
+
+        /* Footer */
+        .footer {
+            padding: 60px 0 30px;
+            background: var(--dark-bg);
+            border-top: 1px solid rgba(255, 165, 0, 0.1);
+        }
+
+        .footer-content {
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr 1fr;
+            gap: 40px;
+            margin-bottom: 40px;
+        }
+
+        .footer-section h4 {
+            color: var(--primary-orange);
+            margin-bottom: 20px;
+            font-size: 1.2rem;
+        }
+
+        .footer-section p,
+        .footer-section a {
+            color: var(--text-dim);
+            text-decoration: none;
+            display: block;
+            margin-bottom: 10px;
+            transition: color 0.3s ease;
+        }
+
+        .footer-section a:hover {
+            color: var(--primary-orange);
+        }
+
+        .footer-bottom {
+            text-align: center;
+            padding-top: 30px;
+            border-top: 1px solid rgba(255, 165, 0, 0.1);
+            color: var(--text-dim);
+        }
+
+        .social-links {
+            display: flex;
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .social-link {
+            width: 40px;
+            height: 40px;
+            background: var(--dark-card);
+            border: 1px solid rgba(255, 165, 0, 0.2);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+        }
+
+        .social-link:hover {
+            background: var(--primary-orange);
+            border-color: var(--primary-orange);
+            transform: translateY(-3px);
+        }
+
+        /* Responsive Design */
+        @media (max-width: 1200px) {
+            .hero-content,
+            .tech-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .features-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .hero-text h1 {
+                font-size: 2.5rem;
+            }
+
+            .features-grid,
+            .usecases-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .footer-content {
+                grid-template-columns: 1fr;
+            }
+
+            .cta-buttons {
+                flex-direction: column;
+            }
+
+            .tech-stack {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Hero Section -->
+    <section class="hero-section">
+        <div class="container">
+            <div class="hero-content">
+                <div class="hero-text">
+                    <h1>HamMumble</h1>
+                    <p class="tagline">Professional VoIP Communication for Ham Radio Operators</p>
+                    <p>A modern, feature-rich Mumble client specifically designed for amateur radio operators. Built with cutting-edge Android technology to deliver seamless voice communication with specialized features for remote gateway control, repeater linking, and emergency communications.</p>
+                    <div class="cta-buttons">
+                        <a href="#download" class="btn btn-primary">Download Now</a>
+                        <a href="#features" class="btn btn-secondary">Explore Features</a>
+                    </div>
+                </div>
+                <div class="hero-logo">
+                    <img src="logo.png" alt="HamMumble Logo">
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Stats Section -->
+    <section class="stats-section">
+        <div class="container">
+            <div class="stats-grid">
+                <div class="stat-item">
+                    <div class="stat-number">Android 8.0+</div>
+                    <div class="stat-label">Compatible</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number">GPL 3.0</div>
+                    <div class="stat-label">Open Source</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number">Material 3</div>
+                    <div class="stat-label">Modern UI</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number">Production</div>
+                    <div class="stat-label">Ready v1.0</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section id="features" class="features-section">
+        <div class="container">
+            <div class="section-header">
+                <h2>Powerful Features for <span class="highlight">Professional Communication</span></h2>
+                <p>Everything you need for reliable VoIP communication in amateur radio operations</p>
+            </div>
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">🎙️</div>
+                    <h3>Advanced Voice Communication</h3>
+                    <p>Professional-grade audio processing with multiple transmission modes.</p>
+                    <ul class="feature-list">
+                        <li>Voice Activity Detection (VAD)</li>
+                        <li>Push-to-Talk (PTT) with visual feedback</li>
+                        <li>Real-time VU meters</li>
+                        <li>Adjustable input gain (0.0 - 3.0x)</li>
+                        <li>High-quality codecs (Opus, CELT, Speex)</li>
+                    </ul>
+                </div>
+
+                <div class="feature-card">
+                    <div class="feature-icon">🔌</div>
+                    <h3>Hardware Integration</h3>
+                    <p>Seamless integration with external radio equipment and controllers.</p>
+                    <ul class="feature-list">
+                        <li>USB serial adapter support</li>
+                        <li>DTR/RTS signal control</li>
+                        <li>Hardware PTT buttons</li>
+                        <li>Radio interface compatibility</li>
+                        <li>Gateway control capabilities</li>
+                    </ul>
+                </div>
+
+                <div class="feature-card">
+                    <div class="feature-icon">🔐</div>
+                    <h3>Security & Authentication</h3>
+                    <p>Enterprise-level security with comprehensive authentication options.</p>
+                    <ul class="feature-list">
+                        <li>PKCS#12 certificate support</li>
+                        <li>Password-protected certificates</li>
+                        <li>Automatic user registration</li>
+                        <li>Registered user indicators</li>
+                        <li>Secure connections</li>
+                    </ul>
+                </div>
+
+                <div class="feature-card">
+                    <div class="feature-icon">🌐</div>
+                    <h3>Multi-Server Management</h3>
+                    <p>Manage unlimited servers with intelligent connection handling.</p>
+                    <ul class="feature-list">
+                        <li>Save unlimited configurations</li>
+                        <li>Auto-connect on startup</li>
+                        <li>Auto-join specific channels</li>
+                        <li>Real-time latency monitoring</li>
+                        <li>Automatic reconnection</li>
+                    </ul>
+                </div>
+
+                <div class="feature-card">
+                    <div class="feature-icon">📊</div>
+                    <h3>Professional Audio Tools</h3>
+                    <p>Studio-quality audio processing and monitoring capabilities.</p>
+                    <ul class="feature-list">
+                        <li>Color-coded VU meters</li>
+                        <li>Start tone for VOX activation</li>
+                        <li>Customizable roger beep</li>
+                        <li>Voice hold timer</li>
+                        <li>Peak indicators</li>
+                    </ul>
+                </div>
+
+                <div class="feature-card">
+                    <div class="feature-icon">💬</div>
+                    <h3>Rich Communication</h3>
+                    <p>Complete communication suite for team coordination.</p>
+                    <ul class="feature-list">
+                        <li>Text messaging support</li>
+                        <li>User presence indicators</li>
+                        <li>Channel management</li>
+                        <li>User lists with status</li>
+                        <li>Connection monitoring</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Technology Section -->
+    <section class="technology-section">
+        <div class="container">
+            <div class="tech-grid">
+                <div class="tech-content">
+                    <h3>Built with Modern Technology</h3>
+                    <p>HamMumble is developed using the latest Android development frameworks and best practices, ensuring optimal performance, security, and user experience.</p>
+                    <p>Our technology stack guarantees a responsive, reliable, and future-proof application that meets the demanding requirements of professional ham radio operations.</p>
+                    <div class="tech-badges">
+                        <span class="tech-badge">Jetpack Compose</span>
+                        <span class="tech-badge">Kotlin 1.8+</span>
+                        <span class="tech-badge">Material Design 3</span>
+                        <span class="tech-badge">Android 8.0+</span>
+                    </div>
+                </div>
+                <div class="tech-visual">
+                    <div class="tech-stack">
+                        <div class="tech-item">
+                            <h4>Jetpack Compose</h4>
+                            <p>Modern declarative UI framework for smooth interfaces</p>
+                        </div>
+                        <div class="tech-item">
+                            <h4>Material 3</h4>
+                            <p>Latest design system with dynamic theming</p>
+                        </div>
+                        <div class="tech-item">
+                            <h4>Kotlin Coroutines</h4>
+                            <p>Efficient async operations and threading</p>
+                        </div>
+                        <div class="tech-item">
+                            <h4>Native Audio</h4>
+                            <p>High-performance audio processing with JNI</p>
+                        </div>
+                        <div class="tech-item">
+                            <h4>USB Serial</h4>
+                            <p>Hardware integration for PTT control</p>
+                        </div>
+                        <div class="tech-item">
+                            <h4>Mumble Protocol</h4>
+                            <p>Full implementation with Opus/CELT codecs</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Use Cases Section -->
+    <section class="usecases-section">
+        <div class="container">
+            <div class="section-header">
+                <h2>Perfect for <span class="highlight">Every Ham Radio Application</span></h2>
+                <p>Designed to excel in diverse amateur radio scenarios</p>
+            </div>
+            <div class="usecases-grid">
+                <div class="usecase-card">
+                    <h3>🚨 Emergency Communications</h3>
+                    <p>Reliable VoIP infrastructure for emergency response teams and disaster recovery operations. Auto-reconnect and channel persistence ensure continuous communication when it matters most.</p>
+                </div>
+                <div class="usecase-card">
+                    <h3>🗼 Repeater Linking</h3>
+                    <p>Connect multiple repeaters and gateways for extended coverage. Hardware PTT support and serial control enable seamless integration with existing repeater infrastructure.</p>
+                </div>
+                <div class="usecase-card">
+                    <h3>📡 Remote Gateway Control</h3>
+                    <p>Control remote gateways and transceivers with precision. Start tones for VOX activation and configurable roger beeps ensure proper gateway operation.</p>
+                </div>
+                <div class="usecase-card">
+                    <h3>🌍 DX Operations</h3>
+                    <p>Coordinate international DX operations with low-latency connections. Real-time monitoring and registered user indicators help manage large groups efficiently.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section id="download" class="cta-section">
+        <div class="container">
+            <div class="cta-content">
+                <h2>Ready to Experience Professional VoIP?</h2>
+                <p>Join the community of ham radio operators using HamMumble for reliable communication</p>
+                <div class="cta-buttons">
+                    <a href="#" class="btn btn-primary">Download for Android</a>
+                    <a href="#" class="btn btn-secondary">View on GitHub</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h4>HamMumble</h4>
+                    <p>Professional VoIP communication for amateur radio operators. Open source, modern, and built for reliability.</p>
+                    <p style="margin-top: 20px;">PD4MV Michel van Veen</p>
+                    <div class="social-links">
+                        <a href="#" class="social-link">G</a>
+                        <a href="#" class="social-link">T</a>
+                        <a href="#" class="social-link">D</a>
+                    </div>
+                </div>
+                <div class="footer-section">
+                    <h4>Product</h4>
+                    <a href="#features">Features</a>
+                    <a href="#download">Download</a>
+                    <a href="#">Documentation</a>
+                    <a href="#">Changelog</a>
+                    <a href="#">Roadmap</a>
+                </div>
+                <div class="footer-section">
+                    <h4>Resources</h4>
+                    <a href="#">User Guide</a>
+                    <a href="#">Quick Start</a>
+                    <a href="#">Troubleshooting</a>
+                    <a href="#">FAQ</a>
+                    <a href="#">Support</a>
+                </div>
+                <div class="footer-section">
+                    <h4>Community</h4>
+                    <a href="#">GitHub</a>
+                    <a href="#">Contributing</a>
+                    <a href="#">Discord</a>
+                    <a href="#">Forum</a>
+                    <a href="#">License</a>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2025 HamMumble - Licensed under GPL-3.0 - Built with ❤️ for the Ham Radio Community</p>
+            </div>
+        </div>
+    </footer>
+
+</body>
+</html>

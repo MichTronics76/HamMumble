@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ Copyright (C) 2014 Andrew Comminos
+  ~
+  ~ This program is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU General Public License as published by
+  ~ the Free Software Foundation, either version 3 of the License, or
+  ~ (at your option) any later version.
+  ~
+  ~ This program is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~ GNU General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU General Public License
+  ~ along with this program.  If not, see <http://www.gnu.org/licenses/>.
+  -->
+
+<resources>
+    <string name="audio_max_bandwidth">Maximum server network bandwidth is only %1$d kbit/s. Adjusting audio quality to %2$d kbit/s (%3$d ms).</string>
+    <string name="chat_notify_muted_deafened">Muted and deafened.</string>
+    <string name="chat_notify_muted">Muted.</string>
+    <string name="chat_notify_unmuted">Unmuted.</string>
+    <string name="chat_notify_now_muted_deafened">%s is now muted and deafened.</string>
+    <string name="chat_notify_now_muted">%s is now muted.</string>
+    <string name="chat_notify_now_unmuted">%s is now unmuted.</string>
+    <string name="chat_notify_connected">%s connected.</string>
+    <string name="chat_notify_disconnected">%s disconnected.</string>
+    <string name="chat_notify_kick_ban_self">You were kicked and banned from the server by %1$s: %2$s.</string>
+    <string name="chat_notify_kick_self">You were kicked from the server by %1$s: %2$s.</string>
+    <string name="chat_notify_kick_ban">%3$s was kicked and banned from the server by %1$s: %2$s.</string>
+    <string name="chat_notify_kick">%3$s was kicked from the server by %1$s: %2$s.</string>
+    <string name="chat_notify_self_recording_started">Recording started</string>
+    <string name="chat_notify_self_recording_stopped">Recording stopped</string>
+    <string name="chat_notify_user_recording_started">%s started recording.</string>
+    <string name="chat_notify_user_recording_stopped">%s stopped recording.</string>
+    <string name="chat_notify_user_joined_channel">%s entered channel.</string>
+    <string name="chat_notify_user_left_channel">%1$s moved to %2$s.</string>
+    <string name="chat_notify_user_joined_channel_by">%1$s moved in from %2$s by %3$s.</string>
+    <string name="chat_notify_user_left_channel_by">%1$s moved to %2$s by %3$s.</string>
+    <string name="deny_reason_channel_name">Denied: Invalid channel name.</string>
+    <string name="deny_reason_text_too_long">Denied: Text message too long.</string>
+    <string name="deny_reason_no_operation_temp">Denied: Operation not permitted in temporary channel.</string>
+    <string name="deny_reason_no_certificate">You need a certificate to perform this operation.</string>
+    <string name="deny_reason_invalid_username">Invalid username.</string>
+    <string name="deny_reason_channel_full">Channel is full.</string>
+    <string name="deny_reason_channel_nesting">Channel nesting limit reached.</string>
+    <string name="deny_reason_other">Reason: %s</string>
+    <string name="perm_denied">Permission denied.</string>
+    <string name="server">Server</string>
+    <string name="the_server">the server</string>
+</resources>

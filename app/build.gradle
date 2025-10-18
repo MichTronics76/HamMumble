@@ -1,0 +1,135 @@
+plugins {
+    id 'com.android.application'
+    id 'org.jetbrains.kotlin.android'
+}
+
+android {
+    namespace 'com.hammumble'
+    compileSdk 33
+
+    defaultConfig {
+        applicationId "com.hammumble"
+        minSdk 26  // Android 8.0
+        targetSdk 33
+        versionCode 100  // v1.0.0 - Production Release
+        versionName "1.0.0"
+
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        vectorDrawables {
+            useSupportLibrary true
+        }
+        
+        // App metadata
+        resValue "string", "app_version", "${versionName}"
+        resValue "string", "app_version_full", "v${versionName} (${versionCode})"
+        
+        // Build information
+        buildConfigField "String", "BUILD_TIME", "\"${new Date().format('yyyy-MM-dd HH:mm')}\""
+        buildConfigField "int", "VERSION_CODE", "${versionCode}"
+        buildConfigField "String", "VERSION_NAME", "\"${versionName}\""
+    }
+
+    signingConfigs {
+        release {
+            // Voor security: gebruik gradle.properties of environment variables
+            // storeFile file("../hammumble-release.keystore")
+            // storePassword System.getenv("KEYSTORE_PASSWORD") ?: project.findProperty("KEYSTORE_PASSWORD")
+            // keyAlias "hammumble"
+            // keyPassword System.getenv("KEY_PASSWORD") ?: project.findProperty("KEY_PASSWORD")
+        }
+    }
+
+    buildTypes {
+        release {
+            // signingConfig signingConfigs.release  // Uncomment after keystore setup
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+    
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+    
+    kotlinOptions {
+        jvmTarget = '1.8'
+    }
+    
+    buildFeatures {
+        compose true
+        viewBinding true
+        buildConfig true
+    }
+    
+    composeOptions {
+        kotlinCompilerExtensionVersion '1.4.3'
+    }
+    
+    packagingOptions {
+        resources {
+            excludes += '/META-INF/{AL2.0,LGPL2.1}'
+        }
+    }
+}
+
+dependencies {
+    implementation 'androidx.core:core-ktx:1.8.0'
+    implementation 'androidx.lifecycle:lifecycle-runtime-ktx:2.3.1'
+    implementation 'androidx.activity:activity-compose:1.5.1'
+    implementation platform('androidx.compose:compose-bom:2022.10.00')
+    implementation 'androidx.compose.ui:ui'
+    implementation 'androidx.compose.ui:ui-graphics'
+    implementation 'androidx.compose.ui:ui-tooling-preview'
+    implementation 'androidx.compose.material3:material3'
+    
+    // Material Icons Extended - voor meer icoon opties
+    implementation 'androidx.compose.material:material-icons-extended:1.4.3'
+    
+    // Navigation
+    implementation 'androidx.navigation:navigation-compose:2.5.3'
+    implementation 'androidx.navigation:navigation-fragment-ktx:2.5.3'
+    implementation 'androidx.navigation:navigation-ui-ktx:2.5.3'
+    
+    // ViewModel
+    implementation 'androidx.lifecycle:lifecycle-viewmodel-compose:2.6.1'
+    
+    // Coroutines
+    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-android:1.6.4'
+    
+    // Network
+    implementation 'com.squareup.okhttp3:okhttp:4.10.0'
+    implementation 'com.squareup.retrofit2:retrofit:2.9.0'
+    implementation 'com.squareup.retrofit2:converter-gson:2.9.0'
+    
+    // Audio processing
+    implementation 'androidx.media:media:1.6.0'
+    
+    // Permissions
+    implementation 'androidx.activity:activity-ktx:1.7.2'
+    
+    // Preferences
+    implementation 'androidx.preference:preference-ktx:1.2.1'
+    
+    // Material Design
+    implementation 'com.google.android.material:material:1.9.0'
+    
+    // BouncyCastle for certificate generation (Android compatible)
+    implementation 'org.bouncycastle:bcprov-jdk18on:1.77'
+    implementation 'org.bouncycastle:bcpkix-jdk18on:1.77'
+    
+    // Humla library for Mumble protobuf definitions
+    implementation project(':libraries:humla')
+    
+    // USB Serial for hardware PTT
+    implementation 'com.github.mik3y:usb-serial-for-android:3.7.3'
+    
+    // Test dependencies
+    testImplementation 'junit:junit:4.13.2'
+    androidTestImplementation 'androidx.test.ext:junit:1.1.5'
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.1'
+    androidTestImplementation platform('androidx.compose:compose-bom:2022.10.00')
+    androidTestImplementation 'androidx.compose.ui:ui-test-junit4'
+    debugImplementation 'androidx.compose.ui:ui-tooling'
+    debugImplementation 'androidx.compose.ui:ui-test-manifest'
+}

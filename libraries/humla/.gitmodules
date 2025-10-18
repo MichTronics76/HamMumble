@@ -1,0 +1,16 @@
+[submodule "src/main/jni/opus"]
+	path = src/main/jni/opus
+	url = https://github.com/xiph/opus
+[submodule "src/main/jni/celt-0.11.0-src"]
+	path = src/main/jni/celt-0.11.0-src
+	url = https://gitlab.com/quite/celt.git
+[submodule "src/main/jni/celt-0.7.0-src"]
+	path = src/main/jni/celt-0.7.0-src
+	url = https://gitlab.com/quite/celt.git
+[submodule "src/main/jni/speex"]
+	path = src/main/jni/speex
+	url = https://github.com/xiph/speex
+[submodule "libs/humla-spongycastle"]
+	path = libs/humla-spongycastle
+	url = https://gitlab.com/quite/humla-spongycastle.git
+	branch = pkcs12-keybag-fixes

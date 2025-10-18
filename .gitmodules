@@ -1,0 +1,3 @@
+[submodule "libraries/humla"]
+	path = libraries/humla
+	url = https://github.com/quite/humla.git

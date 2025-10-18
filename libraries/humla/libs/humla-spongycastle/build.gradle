@@ -1,0 +1,54 @@
+allprojects {
+    apply plugin: 'idea'
+}
+
+ext {
+    bcTestDataHome = file('core/src/test/data').absolutePath
+}
+
+subprojects {
+    apply plugin: 'eclipse'
+    apply plugin: 'java'
+    apply plugin: 'signing'
+
+    group = 'com.madgag.spongycastle'
+
+    task javadocJar(type: Jar, dependsOn: javadoc) {
+        archiveClassifier = 'javadoc'
+        from 'build/docs/javadoc'
+    }
+
+    task sourcesJar(type: Jar) {
+        from sourceSets.main.allSource
+        archiveClassifier = 'sources'
+    }
+
+    artifacts {
+        archives jar
+
+        archives javadocJar
+        archives sourcesJar
+    }
+
+    if (project.hasProperty("signing.keyId")) {
+        signing {
+            sign configurations.archives
+        }
+    }
+
+    repositories {
+        mavenCentral()
+    }
+
+    dependencies {
+        testImplementation group: 'junit', name: 'junit', version: '4.11'
+    }
+
+    sourceCompatibility = 7
+    targetCompatibility = 1.7
+    version = '1.51.0.0'
+
+    test {
+        systemProperty 'bc.test.data.home', bcTestDataHome
+    }
+}

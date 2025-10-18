@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="deny_reason_channel_nesting">Grensen for underkanaler er nådd.</string>
+    <string name="audio_max_bandwidth">Maksimal tjenernettverksbåndbredde er kun %1$d kbit/s. Justerer lydkvalitet til %2$d kbit/s (%3$d ms).</string>
+    <string name="the_server">tjeneren</string>
+    <string name="server">Tjener</string>
+    <string name="perm_denied">Tilgang nektet.</string>
+    <string name="deny_reason_other">Grunn: %s</string>
+    <string name="deny_reason_channel_full">Kanalen er full.</string>
+    <string name="deny_reason_invalid_username">Ugyldig brukernavn.</string>
+    <string name="deny_reason_no_certificate">Du trenger et sertifikat for å utføre denne operasjonen.</string>
+    <string name="deny_reason_no_operation_temp">Nektet: Operasjonen tillates ikke i en midlertidig kanal.</string>
+    <string name="deny_reason_text_too_long">Nektet: Tekstmeldingen er for lang.</string>
+    <string name="deny_reason_channel_name">Nektet: Ugyldig kanalnavn.</string>
+    <string name="chat_notify_user_left_channel_by">%1$s ble flyttet til %2$s av %3$s.</string>
+    <string name="chat_notify_user_joined_channel_by">%1$s ble flyttet inn fra %2$s av %3$s.</string>
+    <string name="chat_notify_user_left_channel">%1$s ble flyttet til %2$s.</string>
+    <string name="chat_notify_user_joined_channel">%s kom inn i kanalen.</string>
+    <string name="chat_notify_user_recording_stopped">%s stoppet opptak.</string>
+    <string name="chat_notify_user_recording_started">%s startet opptak.</string>
+    <string name="chat_notify_self_recording_stopped">Opptak stoppet</string>
+    <string name="chat_notify_self_recording_started">Opptak startet</string>
+    <string name="chat_notify_kick">%3$s ble kastet ut fra tjeneren av %1$s: %2$s.</string>
+    <string name="chat_notify_kick_ban">%3$s ble kastet ut og bannlyst fra tjeneren av %1$s: %2$s.</string>
+    <string name="chat_notify_kick_self">Du ble kastet ut av tjeneren av %1$s: %2$s.</string>
+    <string name="chat_notify_kick_ban_self">Du ble kastet ut og bannlyst fra tjeneren av %1$s: %2$s.</string>
+    <string name="chat_notify_disconnected">%s koblet fra.</string>
+    <string name="chat_notify_connected">%s koblet til.</string>
+    <string name="chat_notify_now_unmuted">%s har fått sin forstummelse opphevet.</string>
+    <string name="chat_notify_now_muted">%s er nå forstummet.</string>
+    <string name="chat_notify_now_muted_deafened">%s er nå forstummet og gjort døv.</string>
+    <string name="chat_notify_unmuted">Forstummelse opphevet.</string>
+    <string name="chat_notify_muted">Forstummet.</string>
+    <string name="chat_notify_muted_deafened">Forstummet og gjort døv.</string>
+</resources>

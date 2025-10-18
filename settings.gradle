@@ -1,0 +1,2 @@
+include ':app', ':libraries:humla'
+rootProject.name = "HamMumble"

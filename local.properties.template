@@ -1,0 +1,10 @@
+# This file contains machine-specific paths and should not be committed to version control
+# Copy this file to local.properties and update the paths to match your system
+
+# Location of the Android SDK. This is only used by Gradle.
+# For customization when using a Version Control System, please read the
+# header note.
+sdk.dir=C\:\\Users\\YourUsername\\AppData\\Local\\Android\\Sdk
+
+# Uncomment the following line if you want to use a different NDK version
+# ndk.dir=C\:\\Users\\YourUsername\\AppData\\Local\\Android\\Sdk\\ndk\\25.1.8937393
