@@ -1512,6 +1512,48 @@ fun SettingsScreen(
                 }
             }
             
+            // Certificate Management
+            Card(
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(16.dp),
+                    verticalArrangement = Arrangement.spacedBy(16.dp)
+                ) {
+                    Text(
+                        text = "Certificate Management",
+                        style = MaterialTheme.typography.headlineSmall
+                    )
+                    
+                    Text(
+                        text = "Manage SSL certificates and trust store for server connections.",
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                    
+                    Button(
+                        onClick = {
+                            com.hammumble.util.HamMumbleTrustStore.clearTrustStore(context)
+                            // Show confirmation message
+                        },
+                        modifier = Modifier.fillMaxWidth(),
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = MaterialTheme.colorScheme.error
+                        )
+                    ) {
+                        Text("Clear All Certificates")
+                    }
+                    
+                    Text(
+                        text = "This will remove all accepted server certificates. You will be prompted to accept certificates again on next connection.",
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                }
+            }
+            
             // USB Device Picker Dialog
             if (showDevicePicker) {
                 UsbDevicePickerDialog(

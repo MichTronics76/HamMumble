@@ -64,6 +64,7 @@ fun ServerConnectionScreen(
     var certificatePassword by remember { mutableStateOf(existingServer?.clientCertificatePassword ?: "") }
     var certificatePasswordVisible by remember { mutableStateOf(false) }
     var registerWithServer by remember { mutableStateOf(existingServer?.registerWithServer ?: false) }
+    var skipCertificateVerification by remember { mutableStateOf(existingServer?.skipCertificateVerification ?: false) }
     var showCertificateGenerationDialog by remember { mutableStateOf(false) }
     
     // Certificate file picker
@@ -280,6 +281,29 @@ fun ServerConnectionScreen(
                         }
                     }
                     
+                    // Skip certificate verification checkbox
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        verticalAlignment = androidx.compose.ui.Alignment.CenterVertically
+                    ) {
+                        Checkbox(
+                            checked = skipCertificateVerification,
+                            onCheckedChange = { skipCertificateVerification = it }
+                        )
+                        Spacer(modifier = Modifier.width(8.dp))
+                        Column {
+                            Text(
+                                text = "Skip SSL certificate verification",
+                                style = MaterialTheme.typography.bodyMedium
+                            )
+                            Text(
+                                text = "Use if server has self-signed or invalid certificates (less secure)",
+                                style = MaterialTheme.typography.bodySmall,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant
+                            )
+                        }
+                    }
+                    
                     Spacer(modifier = Modifier.height(8.dp))
                     
                     // Auto-join channel field
@@ -463,7 +487,8 @@ fun ServerConnectionScreen(
                             autoJoinChannel = autoJoinChannel.trim(),
                             clientCertificatePath = certificatePath,
                             clientCertificatePassword = certificatePassword,
-                            registerWithServer = registerWithServer
+                            registerWithServer = registerWithServer,
+                            skipCertificateVerification = skipCertificateVerification
                         )
                         
                         // Save the server for future use
@@ -512,7 +537,8 @@ fun ServerConnectionScreen(
                         autoJoinChannel = autoJoinChannel.trim(),
                         clientCertificatePath = certificatePath,
                         clientCertificatePassword = certificatePassword,
-                        registerWithServer = registerWithServer
+                        registerWithServer = registerWithServer,
+                        skipCertificateVerification = skipCertificateVerification
                     )
                     viewModel?.saveServer(serverInfo)
                     

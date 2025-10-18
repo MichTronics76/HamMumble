@@ -149,6 +149,11 @@ class MumbleService : Service() {
     private val userTalkStopTimes = mutableMapOf<Int, Long>() // userId -> stopTime
     private var rogerBeepTimerJob: Job? = null
     
+    // Certificate connection fallback tracking
+    private var connectionFailureCount = 0
+    private var isAttemptingFallback = false
+    private var hasTriedWithoutCertificate = false
+    
     // Track when WE stop talking (for mumble roger beep after our voice hold)
     private var myLastTalkTime: Long = 0
     private var mumbleRogerBeepJob: Job? = null
@@ -167,6 +172,10 @@ class MumbleService : Service() {
                 
                 // Reset registration tracking for new connection
                 wasUserRegistered = false
+                
+                // Reset connection failure tracking on successful connection
+                connectionFailureCount = 0
+                hasTriedWithoutCertificate = false
                 
                 // Set audio mode to MODE_IN_COMMUNICATION for proper VoIP behavior
                 audioManager?.mode = android.media.AudioManager.MODE_IN_COMMUNICATION
@@ -243,13 +252,32 @@ class MumbleService : Service() {
                 // Restore original volume if it was changed
                 restoreOriginalVolume()
                 
-                // Start auto-reconnection if this wasn't a user-initiated disconnect
+                // Check if this is a certificate-related error and try fallback
+                val errorMessage = e?.message ?: ""
+                val isCertificateError = errorMessage.contains("certificate", ignoreCase = true) ||
+                                       errorMessage.contains("SSL", ignoreCase = true) ||
+                                       errorMessage.contains("TLS", ignoreCase = true) ||
+                                       errorMessage.contains("handshake", ignoreCase = true)
+                
                 if (!userDisconnected && lastServerInfo != null) {
-                    Log.i("MumbleService", "Connection lost unexpectedly, starting auto-reconnect")
-                    if (e != null) {
-                        Log.w("MumbleService", "Disconnect reason: ${e.message}")
+                    if (isCertificateError && !hasTriedWithoutCertificate && !lastServerInfo!!.skipCertificateVerification) {
+                        Log.i("MumbleService", "Certificate error detected, trying connection without certificate verification")
+                        hasTriedWithoutCertificate = true
+                        // Try connecting without certificate verification
+                        serviceScope.launch {
+                            kotlinx.coroutines.delay(1000) // Brief delay
+                            tryConnection(lastServerInfo!!, usesTrustStore = false)
+                        }
+                    } else {
+                        Log.i("MumbleService", "Connection lost unexpectedly, starting auto-reconnect")
+                        if (e != null) {
+                            Log.w("MumbleService", "Disconnect reason: ${e.message}")
+                        }
+                        // Increment failure count for trust store clearing
+                        connectionFailureCount++
+                        com.hammumble.util.HamMumbleTrustStore.clearTrustStoreAfterFailures(this@MumbleService, connectionFailureCount)
+                        startReconnecting()
                     }
-                    startReconnecting()
                 } else if (userDisconnected) {
                     Log.i("MumbleService", "User disconnected, no auto-reconnect")
                 }
@@ -885,7 +913,8 @@ class MumbleService : Service() {
                         clientCertificatePath = if (jsonObj.has("clientCertificatePath")) 
                             jsonObj.getString("clientCertificatePath") else null,
                         clientCertificatePassword = jsonObj.optString("clientCertificatePassword", ""),
-                        registerWithServer = jsonObj.optBoolean("registerWithServer", false)
+                        registerWithServer = jsonObj.optBoolean("registerWithServer", false),
+                        skipCertificateVerification = jsonObj.optBoolean("skipCertificateVerification", false)
                     )
                     android.util.Log.i("MumbleService", "✓ Reloaded server config from storage with certificate: ${reloaded.clientCertificatePath}")
                     return reloaded
@@ -954,6 +983,9 @@ class MumbleService : Service() {
             return
         }
         
+        // Clear trust store on first run
+        com.hammumble.util.HamMumbleTrustStore.clearTrustStoreOnFirstRun(this)
+        
         // Reload server info from storage to get latest certificate info
         val reloadedServerInfo = reloadServerInfoFromStorage(serverInfo)
         
@@ -961,14 +993,23 @@ class MumbleService : Service() {
         userDisconnected = false
         lastServerInfo = reloadedServerInfo
         
+        // Reset fallback tracking for new connection
+        hasTriedWithoutCertificate = false
+        
         // Debug: Log the reloaded serverInfo
         android.util.Log.d("MumbleService", "Connecting to server: ${reloadedServerInfo.name}")
         android.util.Log.d("MumbleService", "Reloaded certificate path: ${reloadedServerInfo.clientCertificatePath}")
         android.util.Log.d("MumbleService", "Reloaded certificate password: ${if (reloadedServerInfo.clientCertificatePassword.isNotEmpty()) "[set]" else "[empty]"}")
+        android.util.Log.d("MumbleService", "Skip certificate verification: ${reloadedServerInfo.skipCertificateVerification}")
         
+        // Try connection with appropriate certificate mode
+        tryConnection(reloadedServerInfo, usesTrustStore = !reloadedServerInfo.skipCertificateVerification)
+    }
+    
+    private fun tryConnection(serverInfo: ServerInfo, usesTrustStore: Boolean) {
         serviceScope.launch {
             try {
-                _currentServer.value = reloadedServerInfo
+                _currentServer.value = serverInfo
                 _connectionState.value = ConnectionState.CONNECTING
                 
                 // Wait for HumlaService to be bound
@@ -983,14 +1024,14 @@ class MumbleService : Service() {
                     return@launch
                 }
                 
-                // Create Humla Server object (using reloaded info)
+                // Create Humla Server object
                 val server = Server(
                     -1,  // id
-                    reloadedServerInfo.name.ifEmpty { reloadedServerInfo.address },
-                    reloadedServerInfo.address,
-                    reloadedServerInfo.port,
-                    reloadedServerInfo.username,
-                    reloadedServerInfo.password
+                    serverInfo.name.ifEmpty { serverInfo.address },
+                    serverInfo.address,
+                    serverInfo.port,
+                    serverInfo.username,
+                    serverInfo.password
                 )
                 
                 // Convert TransmissionMode to Humla constant
@@ -1025,29 +1066,33 @@ class MumbleService : Service() {
                 // Add empty access tokens list (required by Humla)
                 connectIntent.putStringArrayListExtra(HumlaService.EXTRAS_ACCESS_TOKENS, ArrayList<String>())
                 
-                // Add trust store parameters
-                val trustStorePath = com.hammumble.util.HamMumbleTrustStore.getTrustStorePath(this@MumbleService)
-                if (trustStorePath != null) {
-                    connectIntent.putExtra(HumlaService.EXTRAS_TRUST_STORE, trustStorePath)
-                    connectIntent.putExtra(HumlaService.EXTRAS_TRUST_STORE_PASSWORD, 
-                        com.hammumble.util.HamMumbleTrustStore.getTrustStorePassword())
-                    connectIntent.putExtra(HumlaService.EXTRAS_TRUST_STORE_FORMAT, 
-                        com.hammumble.util.HamMumbleTrustStore.getTrustStoreFormat())
-                    android.util.Log.d("MumbleService", "Using trust store: $trustStorePath")
+                // Add trust store parameters (only if usesTrustStore is true)
+                if (usesTrustStore) {
+                    val trustStorePath = com.hammumble.util.HamMumbleTrustStore.getTrustStorePath(this@MumbleService)
+                    if (trustStorePath != null) {
+                        connectIntent.putExtra(HumlaService.EXTRAS_TRUST_STORE, trustStorePath)
+                        connectIntent.putExtra(HumlaService.EXTRAS_TRUST_STORE_PASSWORD, 
+                            com.hammumble.util.HamMumbleTrustStore.getTrustStorePassword())
+                        connectIntent.putExtra(HumlaService.EXTRAS_TRUST_STORE_FORMAT, 
+                            com.hammumble.util.HamMumbleTrustStore.getTrustStoreFormat())
+                        android.util.Log.d("MumbleService", "Using trust store: $trustStorePath")
+                    } else {
+                        android.util.Log.d("MumbleService", "No trust store yet, will create on first cert failure")
+                    }
                 } else {
-                    android.util.Log.d("MumbleService", "No trust store yet, will create on first cert failure")
+                    android.util.Log.d("MumbleService", "Skipping certificate verification (no trust store)")
                 }
                 
-                // Add client certificate if configured (using reloaded info)
-                android.util.Log.d("MumbleService", "Certificate path from reloadedServerInfo: ${reloadedServerInfo.clientCertificatePath}")
-                if (reloadedServerInfo.clientCertificatePath != null && reloadedServerInfo.clientCertificatePath.isNotEmpty()) {
-                    val certificateBytes = com.hammumble.util.CertificateManager.readCertificate(reloadedServerInfo.clientCertificatePath)
+                // Add client certificate if configured
+                android.util.Log.d("MumbleService", "Certificate path from serverInfo: ${serverInfo.clientCertificatePath}")
+                if (serverInfo.clientCertificatePath != null && serverInfo.clientCertificatePath.isNotEmpty()) {
+                    val certificateBytes = com.hammumble.util.CertificateManager.readCertificate(serverInfo.clientCertificatePath)
                     if (certificateBytes != null) {
                         connectIntent.putExtra(HumlaService.EXTRAS_CERTIFICATE, certificateBytes)
-                        connectIntent.putExtra(HumlaService.EXTRAS_CERTIFICATE_PASSWORD, reloadedServerInfo.clientCertificatePassword)
-                        android.util.Log.i("MumbleService", "✓ Using client certificate: ${com.hammumble.util.CertificateManager.getFileName(reloadedServerInfo.clientCertificatePath)}")
+                        connectIntent.putExtra(HumlaService.EXTRAS_CERTIFICATE_PASSWORD, serverInfo.clientCertificatePassword)
+                        android.util.Log.i("MumbleService", "✓ Using client certificate: ${com.hammumble.util.CertificateManager.getFileName(serverInfo.clientCertificatePath)}")
                     } else {
-                        android.util.Log.w("MumbleService", "Failed to read client certificate file: ${reloadedServerInfo.clientCertificatePath}")
+                        android.util.Log.w("MumbleService", "Failed to read client certificate file: ${serverInfo.clientCertificatePath}")
                     }
                 } else {
                     android.util.Log.w("MumbleService", "No client certificate configured for this server")

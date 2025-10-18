@@ -106,6 +106,30 @@ object HamMumbleTrustStore {
     }
 
     /**
+     * Clears trust store if this is the first app run.
+     */
+    fun clearTrustStoreOnFirstRun(context: Context) {
+        val prefs = context.getSharedPreferences("app_prefs", Context.MODE_PRIVATE)
+        val isFirstRun = prefs.getBoolean("is_first_run", true)
+        
+        if (isFirstRun) {
+            clearTrustStore(context)
+            prefs.edit().putBoolean("is_first_run", false).apply()
+            Log.i(TAG, "First run detected - cleared trust store")
+        }
+    }
+
+    /**
+     * Clears trust store after consecutive connection failures.
+     */
+    fun clearTrustStoreAfterFailures(context: Context, failureCount: Int, threshold: Int = 5) {
+        if (failureCount >= threshold) {
+            clearTrustStore(context)
+            Log.i(TAG, "Cleared trust store after $failureCount consecutive failures")
+        }
+    }
+
+    /**
      * Checks if a certificate is already trusted.
      */
     fun isCertificateTrusted(context: Context, alias: String): Boolean {

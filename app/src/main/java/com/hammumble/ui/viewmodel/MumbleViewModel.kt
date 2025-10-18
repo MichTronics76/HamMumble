@@ -314,7 +314,8 @@ class MumbleViewModel : ViewModel() {
                         autoJoinChannel = jsonObj.optString("autoJoinChannel", ""),
                         clientCertificatePath = if (jsonObj.has("clientCertificatePath")) jsonObj.getString("clientCertificatePath") else null,
                         clientCertificatePassword = jsonObj.optString("clientCertificatePassword", ""),
-                        registerWithServer = jsonObj.optBoolean("registerWithServer", false)
+                        registerWithServer = jsonObj.optBoolean("registerWithServer", false),
+                        skipCertificateVerification = jsonObj.optBoolean("skipCertificateVerification", false)
                     )
                     servers.add(server)
                 }
@@ -392,6 +393,7 @@ class MumbleViewModel : ViewModel() {
                 }
                 jsonObj.put("clientCertificatePassword", server.clientCertificatePassword)
                 jsonObj.put("registerWithServer", server.registerWithServer)
+                jsonObj.put("skipCertificateVerification", server.skipCertificateVerification)
                 jsonArray.put(jsonObj)
             }
             

@@ -12,7 +12,8 @@ data class ServerInfo(
     val autoJoinChannel: String = "", // Channel name to auto-join after connecting (empty = no auto-join)
     val clientCertificatePath: String? = null, // Path to .p12 certificate file
     val clientCertificatePassword: String = "", // Password for the certificate
-    val registerWithServer: Boolean = false // Automatically register with server after successful connection
+    val registerWithServer: Boolean = false, // Automatically register with server after successful connection
+    val skipCertificateVerification: Boolean = false // Skip SSL certificate verification for this server
 )
 
 data class User(

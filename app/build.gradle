@@ -32,9 +32,9 @@ android {
     signingConfigs {
         release {
             storeFile file("../hammumble-release.keystore")
-            storePassword "MiHammumble2024!!"
+            storePassword "!!07071976Mi!!"
             keyAlias "hammumble"
-            keyPassword "MiHammumble2024!!"
+            keyPassword "!!07071976Mi!!"
         }
     }
 
