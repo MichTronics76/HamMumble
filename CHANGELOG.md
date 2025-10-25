@@ -5,6 +5,69 @@ All notable changes to HamMumble will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.1.0] - 2025-10-26 - Multi-User & USB Audio Release 🎧
+
+### ✨ Added
+- **Per-User Certificate Generation**: Unique certificates for each user to enable multiple simultaneous connections
+  - Automatic certificate generation using username as Common Name (CN)
+  - Each user gets a unique identity for server authentication
+  - No more "duplicate certificate" connection rejections
+  - Certificates persist across reconnections via SharedPreferences
+- **USB Audio Device Selection**: Professional audio routing for ham radio operators
+  - Separate TX (transmit) and RX (receive) device selection
+  - Prevents audio loopback when using USB audio interfaces
+  - Support for USB sound cards, SignaLink, RigBlaster, and professional audio interfaces
+  - Automatic detection of connected USB audio devices
+  - Smart device recommendations (Standard/Gateway/Full USB modes)
+  - Complete Settings UI with device selection cards
+  - Real-time device routing monitoring
+- **Trust Store Auto-Creation**: Automatic empty trust store generation
+  - Eliminates FileNotFoundException crashes on first connection
+  - Seamless SSL/TLS initialization
+- **Guest/Anonymous Connections**: Connect without client certificates
+  - Server compatibility for public/guest access
+  - Optional certificate authentication
+
+### 🔧 Improved
+- **Certificate Management**: 
+  - Moved generation from UI-only to service connection point
+  - Auto-generate certificates at connection time if none configured
+  - Dialog now pre-fills username for convenience
+  - Better certificate path handling and validation
+- **Audio Stack Enhancements**:
+  - Added `setPreferredDevice()` support in AudioInput, AudioOutput, AudioHandler
+  - Device routing APIs throughout Humla library
+  - Support for Bluetooth, USB, built-in, and wired audio devices
+  - Audio device monitoring and fallback handling
+- **Connection Robustness**:
+  - Improved SSL socket factory error handling
+  - Better null certificate path management
+  - Enhanced connection state tracking
+
+### 📚 Documentation
+- **README Updates**:
+  - Comprehensive USB Audio Device Selection section
+  - Setup instructions for USB audio interfaces
+  - Troubleshooting tips for USB audio
+  - Recommended devices for ham radio (SignaLink, RigBlaster, etc.)
+  - Sample rate and compatibility information
+- **Technical Documentation**:
+  - New AUDIO_DEVICE_ROUTING.md with architecture details
+  - API usage examples for developers
+  - Device type reference and Android version requirements
+  - Debugging and logging guide
+
+### 🐛 Fixed
+- **Trust Store FileNotFoundException**: Empty BKS trust store now auto-created on first run
+- **Multi-User Connection Issue**: Each user now has unique certificate, allowing simultaneous connections
+- **Certificate Path Handling**: Fixed null pointer exceptions in SSL socket factory
+- **Audio Loopback Prevention**: Explicit device routing prevents feedback loops with USB audio
+
+### 🧹 Cleanup
+- Removed temporary SSL debug logging
+- Cleaned up unused imports
+- Production-ready code with appropriate logging levels
+
 ## [1.0.0] - 2025-10-18 - Production Release 🎉
 
 ### ✨ Added

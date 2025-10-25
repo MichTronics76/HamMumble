@@ -11,8 +11,8 @@ android {
         applicationId "com.hammumble"
         minSdk 26  // Android 8.0
         targetSdk 33
-        versionCode 100  // v1.0.0 - Production Release
-        versionName "1.0.0"
+        versionCode 110  // v1.1.0 - Multi-User & USB Audio Release
+        versionName "1.1.0"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
