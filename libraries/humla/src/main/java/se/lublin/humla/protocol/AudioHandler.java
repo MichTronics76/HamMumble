@@ -18,7 +18,9 @@
 package se.lublin.humla.protocol;
 
 import android.content.Context;
+import android.media.AudioDeviceInfo;
 import android.media.AudioManager;
+import android.os.Build;
 import android.util.Log;
 
 import se.lublin.humla.R;
@@ -680,6 +682,58 @@ public class AudioHandler extends HumlaNetworkListener implements AudioInput.Aud
         if (mOutput != null) {
             mOutput.setOutputGain(gain);
         }
+    }
+    
+    /**
+     * Set the preferred input device for transmission (TX).
+     * Requires Android M (API 23) or higher.
+     * 
+     * @param deviceInfo The AudioDeviceInfo to use for input, or null for system default
+     * @return true if successful, false otherwise
+     */
+    public boolean setPreferredInputDevice(AudioDeviceInfo deviceInfo) {
+        if (mInput != null) {
+            return mInput.setPreferredDevice(deviceInfo);
+        }
+        return false;
+    }
+    
+    /**
+     * Set the preferred output device for reception (RX).
+     * Requires Android M (API 23) or higher.
+     * 
+     * @param deviceInfo The AudioDeviceInfo to use for output, or null for system default
+     * @return true if successful, false otherwise
+     */
+    public boolean setPreferredOutputDevice(AudioDeviceInfo deviceInfo) {
+        if (mOutput != null) {
+            return mOutput.setPreferredDevice(deviceInfo);
+        }
+        return false;
+    }
+    
+    /**
+     * Get the currently routed input device.
+     * 
+     * @return The active input AudioDeviceInfo, or null if unknown
+     */
+    public AudioDeviceInfo getRoutedInputDevice() {
+        if (mInput != null) {
+            return mInput.getRoutedDevice();
+        }
+        return null;
+    }
+    
+    /**
+     * Get the currently routed output device.
+     * 
+     * @return The active output AudioDeviceInfo, or null if unknown
+     */
+    public AudioDeviceInfo getRoutedOutputDevice() {
+        if (mOutput != null) {
+            return mOutput.getRoutedDevice();
+        }
+        return null;
     }
 
     /**

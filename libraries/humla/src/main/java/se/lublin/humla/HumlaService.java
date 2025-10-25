@@ -22,6 +22,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.media.AudioDeviceInfo;
 import android.media.AudioManager;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
@@ -1310,6 +1311,72 @@ public class HumlaService extends Service implements IHumlaService, IHumlaSessio
         } else {
             Log.w("HumlaService", "Cannot set output gain: AudioHandler not initialized yet");
         }
+    }
+    
+    /**
+     * Set the preferred input device for transmission (TX).
+     * Requires Android M (API 23) or higher.
+     * 
+     * @param deviceInfo The AudioDeviceInfo to use for input, or null for system default
+     * @return true if successful, false otherwise
+     */
+    public boolean setPreferredInputDevice(AudioDeviceInfo deviceInfo) {
+        if (mAudioHandler != null) {
+            boolean success = mAudioHandler.setPreferredInputDevice(deviceInfo);
+            if (success && deviceInfo != null) {
+                Log.i("HumlaService", "Set TX device: " + deviceInfo.getProductName() + 
+                      " (Type: " + deviceInfo.getType() + ")");
+            }
+            return success;
+        } else {
+            Log.w("HumlaService", "Cannot set input device: AudioHandler not initialized");
+            return false;
+        }
+    }
+    
+    /**
+     * Set the preferred output device for reception (RX).
+     * Requires Android M (API 23) or higher.
+     * 
+     * @param deviceInfo The AudioDeviceInfo to use for output, or null for system default
+     * @return true if successful, false otherwise
+     */
+    public boolean setPreferredOutputDevice(AudioDeviceInfo deviceInfo) {
+        if (mAudioHandler != null) {
+            boolean success = mAudioHandler.setPreferredOutputDevice(deviceInfo);
+            if (success && deviceInfo != null) {
+                Log.i("HumlaService", "Set RX device: " + deviceInfo.getProductName() + 
+                      " (Type: " + deviceInfo.getType() + ")");
+            }
+            return success;
+        } else {
+            Log.w("HumlaService", "Cannot set output device: AudioHandler not initialized");
+            return false;
+        }
+    }
+    
+    /**
+     * Get the currently routed input device.
+     * 
+     * @return The active input AudioDeviceInfo, or null if unknown
+     */
+    public AudioDeviceInfo getRoutedInputDevice() {
+        if (mAudioHandler != null) {
+            return mAudioHandler.getRoutedInputDevice();
+        }
+        return null;
+    }
+    
+    /**
+     * Get the currently routed output device.
+     * 
+     * @return The active output AudioDeviceInfo, or null if unknown
+     */
+    public AudioDeviceInfo getRoutedOutputDevice() {
+        if (mAudioHandler != null) {
+            return mAudioHandler.getRoutedOutputDevice();
+        }
+        return null;
     }
 
     /**

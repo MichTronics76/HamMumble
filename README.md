@@ -48,6 +48,9 @@ HamMumble is a feature-rich, production-ready Mumble VoIP client specifically de
   - Configurable voice hold timer (50ms - 2000ms)
   - Start tone for VOX-activated transmitters ✨
   - High-quality audio codecs (Opus, CELT, Speex)
+  - USB audio device selection for external sound cards ✨
+  - Automatic detection of USB audio interfaces
+  - Support for professional USB audio adapters
 
 - **Roger Beep System** ✨
   - Customizable tone frequency (300Hz - 3000Hz)
@@ -366,6 +369,67 @@ Access Settings via the menu (☰) → Settings
 - **Duration**: Set tone length before voice
 - **Frequency**: Adjust tone pitch
 - Helps open transmitter VOX before voice starts
+
+### USB Audio Device Selection ✨
+
+HamMumble supports external USB audio interfaces for professional audio quality and hardware integration.
+
+**Supported Devices**
+- USB sound cards
+- Professional USB audio interfaces
+- USB headsets with microphone
+- Radio interface adapters (SignaLink, RigBlaster, etc.)
+- USB codec devices
+
+**Setup Instructions**
+
+1. **Connect USB Audio Device**
+   - Plug USB audio interface into Android device via OTG cable
+   - Wait for device to be recognized (notification may appear)
+   - Some devices may require powered USB hub
+
+2. **Configure in App**
+   - Open Settings → Audio
+   - Find "USB Audio Device" section
+   - Available USB audio devices will be listed
+   - Tap to select your device
+   - Selected device will be highlighted in blue
+
+3. **Audio Routing**
+   - When USB device selected:
+     - Microphone input uses USB device
+     - Audio output uses USB device
+   - When no USB device selected:
+     - Uses default device microphone (built-in or Bluetooth)
+     - Uses default device speaker/headphone
+   - Automatic fallback if USB device disconnected
+
+4. **Benefits**
+   - Bypass phone's internal audio codec
+   - Better noise isolation
+   - Professional-grade audio quality
+   - Direct interface with radio equipment
+   - Ground loop isolation (with proper hardware)
+   - Consistent audio levels
+
+**Recommended USB Audio Devices for Ham Radio**
+- **SignaLink USB**: Popular radio interface, well-supported
+- **RigBlaster series**: Proven amateur radio interfaces  
+- **Generic USB sound cards**: CM108/CM119 chipset work well
+- **Behringer UCA202**: Budget-friendly, good quality
+- **USB headsets**: Convenient for portable operation
+
+**Troubleshooting USB Audio**
+- If device not detected:
+  - Try different USB OTG cable
+  - Use powered USB hub for high-power devices
+  - Restart app after connecting device
+  - Check Android supports USB audio (most Android 8.0+ do)
+- If audio quality poor:
+  - Check gain settings
+  - Verify device sample rate compatibility
+  - Try different USB port/cable
+  - Disable any audio effects in device settings
 
 ### Serial PTT Setup
 

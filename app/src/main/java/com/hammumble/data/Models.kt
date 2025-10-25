@@ -236,6 +236,40 @@ data class VoxPreToneSettings(
     }
 }
 
+/**
+ * Audio device routing settings for separate TX and RX paths
+ * Allows selection of different audio devices for input (TX) and output (RX)
+ */
+data class AudioDeviceSettings(
+    val txDeviceId: Int = -1, // Audio device ID for transmission (input/microphone), -1 = system default
+    val rxDeviceId: Int = -1, // Audio device ID for reception (output/speaker), -1 = system default
+    val preferSeparateDevices: Boolean = false, // If true, try to use different devices for TX/RX
+    val txDeviceName: String = "", // Human-readable name of TX device (for UI display)
+    val rxDeviceName: String = "" // Human-readable name of RX device (for UI display)
+) {
+    fun toJson(): JSONObject {
+        return JSONObject().apply {
+            put("txDeviceId", txDeviceId)
+            put("rxDeviceId", rxDeviceId)
+            put("preferSeparateDevices", preferSeparateDevices)
+            put("txDeviceName", txDeviceName)
+            put("rxDeviceName", rxDeviceName)
+        }
+    }
+    
+    companion object {
+        fun fromJson(json: JSONObject): AudioDeviceSettings {
+            return AudioDeviceSettings(
+                txDeviceId = json.optInt("txDeviceId", -1),
+                rxDeviceId = json.optInt("rxDeviceId", -1),
+                preferSeparateDevices = json.optBoolean("preferSeparateDevices", false),
+                txDeviceName = json.optString("txDeviceName", ""),
+                rxDeviceName = json.optString("rxDeviceName", "")
+            )
+        }
+    }
+}
+
 data class AudioSettings(
     val bitrate: Int = 64000,
     val framesPerPacket: Int = 2,
@@ -256,7 +290,8 @@ data class AudioSettings(
     val serialPtt: SerialPttSettings = SerialPttSettings(), // Hardware PTT via serial port
     val rogerBeep: RogerBeepSettings = RogerBeepSettings(), // 8-tone roger beep played locally on PTT release
     val mumbleRogerBeep: MumbleRogerBeepSettings = MumbleRogerBeepSettings(), // Roger beep transmitted to Mumble when our voice hold ends
-    val voxPreTone: VoxPreToneSettings = VoxPreToneSettings() // Inaudible pre-transmission tone for VOX triggering
+    val voxPreTone: VoxPreToneSettings = VoxPreToneSettings(), // Inaudible pre-transmission tone for VOX triggering
+    val audioDevices: AudioDeviceSettings = AudioDeviceSettings() // Separate TX/RX audio device routing
 ) {
     fun toJson(): JSONObject {
         return JSONObject().apply {
@@ -280,6 +315,7 @@ data class AudioSettings(
             put("rogerBeep", rogerBeep.toJson())
             put("mumbleRogerBeep", mumbleRogerBeep.toJson())
             put("voxPreTone", voxPreTone.toJson())
+            put("audioDevices", audioDevices.toJson())
         }
     }
     
@@ -309,7 +345,8 @@ data class AudioSettings(
                 serialPtt = json.optJSONObject("serialPtt")?.let { SerialPttSettings.fromJson(it) } ?: SerialPttSettings(),
                 rogerBeep = json.optJSONObject("rogerBeep")?.let { RogerBeepSettings.fromJson(it) } ?: RogerBeepSettings(),
                 mumbleRogerBeep = json.optJSONObject("mumbleRogerBeep")?.let { MumbleRogerBeepSettings.fromJson(it) } ?: MumbleRogerBeepSettings(),
-                voxPreTone = json.optJSONObject("voxPreTone")?.let { VoxPreToneSettings.fromJson(it) } ?: VoxPreToneSettings()
+                voxPreTone = json.optJSONObject("voxPreTone")?.let { VoxPreToneSettings.fromJson(it) } ?: VoxPreToneSettings(),
+                audioDevices = json.optJSONObject("audioDevices")?.let { AudioDeviceSettings.fromJson(it) } ?: AudioDeviceSettings()
             )
         }
     }

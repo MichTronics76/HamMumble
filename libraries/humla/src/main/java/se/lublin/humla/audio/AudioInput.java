@@ -19,6 +19,8 @@ package se.lublin.humla.audio;
 
 import android.media.AudioFormat;
 import android.media.AudioRecord;
+import android.media.AudioDeviceInfo;
+import android.os.Build;
 import android.util.Log;
 
 import se.lublin.humla.exception.AudioInitializationException;
@@ -199,6 +201,51 @@ public class AudioInput implements Runnable {
     
     public void setMicBoost(boolean enabled) {
         mMicBoost = enabled;
+    }
+    
+    /**
+     * Set the preferred audio device for input (requires Android M+).
+     * This allows explicit routing to a specific audio device (e.g., USB audio interface)
+     * to prevent automatic routing that could cause TX/RX crosstalk.
+     * 
+     * @param deviceInfo The AudioDeviceInfo to use for input, or null to use system default
+     * @return true if the device was set successfully, false otherwise
+     */
+    public boolean setPreferredDevice(AudioDeviceInfo deviceInfo) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            if (mAudioRecord != null) {
+                boolean success = mAudioRecord.setPreferredDevice(deviceInfo);
+                if (success && deviceInfo != null) {
+                    Log.i(TAG, "Set preferred input device: " + deviceInfo.getProductName() + 
+                          " (Type: " + deviceInfo.getType() + ", ID: " + deviceInfo.getId() + ")");
+                } else if (success) {
+                    Log.i(TAG, "Reset input device to system default");
+                } else {
+                    Log.w(TAG, "Failed to set preferred input device");
+                }
+                return success;
+            } else {
+                Log.w(TAG, "Cannot set preferred device: AudioRecord not initialized");
+                return false;
+            }
+        } else {
+            Log.w(TAG, "setPreferredDevice requires Android M (API 23) or higher");
+            return false;
+        }
+    }
+    
+    /**
+     * Get the currently routed audio device (requires Android M+).
+     * 
+     * @return The currently active AudioDeviceInfo, or null if unknown
+     */
+    public AudioDeviceInfo getRoutedDevice() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            if (mAudioRecord != null) {
+                return mAudioRecord.getRoutedDevice();
+            }
+        }
+        return null;
     }
 
     public interface AudioInputListener {

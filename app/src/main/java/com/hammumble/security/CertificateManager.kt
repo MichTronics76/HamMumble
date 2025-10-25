@@ -35,9 +35,6 @@ class CertificateManager(private val context: Context) {
         const val CERT_ALIAS = "HamMumbleCert"
         private const val CERT_VALIDITY_YEARS = 10
         
-        // Certificate subject details
-        private const val CERT_SUBJECT = "CN=HamMumble User, O=HamMumble, C=US"
-        
         init {
             // Register BouncyCastle provider if not already registered
             if (Security.getProvider(BouncyCastleProvider.PROVIDER_NAME) == null) {
@@ -86,8 +83,10 @@ class CertificateManager(private val context: Context) {
     /**
      * Generate a new self-signed certificate for Mumble authentication.
      * Uses PKCS12 file storage (NOT Android KeyStore).
+     * 
+     * @param username The unique username/callsign to include in the certificate CN field
      */
-    fun generateCertificate(): Boolean {
+    fun generateCertificate(username: String = "HamMumble User"): Boolean {
         return try {
             
             val keyStore = loadKeyStore()
@@ -110,7 +109,8 @@ class CertificateManager(private val context: Context) {
             }.time
             
             val serialNumber = BigInteger.valueOf(System.currentTimeMillis())
-            val subject = X500Name(CERT_SUBJECT)
+            // Create unique subject using the provided username
+            val subject = X500Name("CN=$username, O=HamMumble, C=US")
             
             val certBuilder = X509v3CertificateBuilder(
                 subject, // Issuer (self-signed)

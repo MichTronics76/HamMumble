@@ -1309,6 +1309,277 @@ fun SettingsScreen(
                 }
             }
             
+            // Audio Device Routing Settings
+            Card(
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(16.dp),
+                    verticalArrangement = Arrangement.spacedBy(12.dp)
+                ) {
+                    Text(
+                        text = "🎧 Audio Device Routing (TX/RX Separation)",
+                        style = MaterialTheme.typography.headlineSmall
+                    )
+                    
+                    Text(
+                        text = "Configure separate audio devices for transmission (TX) and reception (RX) to prevent audio loopback",
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                    
+                    // Info banner for USB audio users
+                    if (viewModel.hasUSBDevices()) {
+                        Card(
+                            colors = CardDefaults.cardColors(
+                                containerColor = MaterialTheme.colorScheme.secondaryContainer
+                            ),
+                            modifier = Modifier.fillMaxWidth()
+                        ) {
+                            Row(
+                                modifier = Modifier.padding(12.dp),
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                Text(
+                                    text = "🔌",
+                                    style = MaterialTheme.typography.titleLarge,
+                                    modifier = Modifier.padding(end = 8.dp)
+                                )
+                                Text(
+                                    text = "USB audio detected! Configure separate TX and RX devices to prevent feedback.",
+                                    style = MaterialTheme.typography.bodySmall,
+                                    color = MaterialTheme.colorScheme.onSecondaryContainer
+                                )
+                            }
+                        }
+                    }
+                    
+                    // TX Device Selection
+                    Text(
+                        text = "TX Device (Microphone Input)",
+                        style = MaterialTheme.typography.titleMedium
+                    )
+                    
+                    val currentTxDeviceName = if (audioSettings.audioDevices.txDeviceId == -1) {
+                        "System Default"
+                    } else {
+                        audioSettings.audioDevices.txDeviceName.ifEmpty { "Device ID: ${audioSettings.audioDevices.txDeviceId}" }
+                    }
+                    
+                    Button(
+                        onClick = { /* TODO: Show TX device picker dialog */ },
+                        modifier = Modifier.fillMaxWidth()
+                    ) {
+                        Text("Selected: $currentTxDeviceName")
+                    }
+                    
+                    // RX Device Selection
+                    Text(
+                        text = "RX Device (Speaker Output)",
+                        style = MaterialTheme.typography.titleMedium
+                    )
+                    
+                    val currentRxDeviceName = if (audioSettings.audioDevices.rxDeviceId == -1) {
+                        "System Default"
+                    } else {
+                        audioSettings.audioDevices.rxDeviceName.ifEmpty { "Device ID: ${audioSettings.audioDevices.rxDeviceId}" }
+                    }
+                    
+                    Button(
+                        onClick = { /* TODO: Show RX device picker dialog */ },
+                        modifier = Modifier.fillMaxWidth()
+                    ) {
+                        Text("Selected: $currentRxDeviceName")
+                    }
+                    
+                    // Prefer Separate Devices Toggle
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Column(modifier = Modifier.weight(1f)) {
+                            Text("Enforce Separate Devices")
+                            Text(
+                                text = "Prevent using the same device for TX and RX",
+                                style = MaterialTheme.typography.bodySmall,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant
+                            )
+                        }
+                        Switch(
+                            checked = audioSettings.audioDevices.preferSeparateDevices,
+                            onCheckedChange = { enabled ->
+                                viewModel.updateAudioSettings(
+                                    audioSettings.copy(
+                                        audioDevices = audioSettings.audioDevices.copy(
+                                            preferSeparateDevices = enabled
+                                        )
+                                    )
+                                )
+                            }
+                        )
+                    }
+                    
+                    // Quick Actions
+                    Text(
+                        text = "Quick Setup",
+                        style = MaterialTheme.typography.titleMedium
+                    )
+                    
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.spacedBy(8.dp)
+                    ) {
+                        OutlinedButton(
+                            onClick = {
+                                // Reset to defaults
+                                viewModel.updateAudioSettings(
+                                    audioSettings.copy(
+                                        audioDevices = audioSettings.audioDevices.copy(
+                                            txDeviceId = -1,
+                                            rxDeviceId = -1,
+                                            txDeviceName = "",
+                                            rxDeviceName = ""
+                                        )
+                                    )
+                                )
+                            },
+                            modifier = Modifier.weight(1f)
+                        ) {
+                            Text("Reset", style = MaterialTheme.typography.bodySmall)
+                        }
+                        
+                        Button(
+                            onClick = {
+                                // Standard mode: USB input for TX, speaker for RX
+                                val (txDevice, rxDevice) = viewModel.getRecommendedSeparateDevices()
+                                viewModel.updateAudioSettings(
+                                    audioSettings.copy(
+                                        audioDevices = audioSettings.audioDevices.copy(
+                                            txDeviceId = txDevice?.id ?: -1,
+                                            rxDeviceId = rxDevice?.id ?: -1,
+                                            txDeviceName = txDevice?.getDisplayName() ?: "",
+                                            rxDeviceName = rxDevice?.getDisplayName() ?: "",
+                                            preferSeparateDevices = txDevice != null && rxDevice != null
+                                        )
+                                    )
+                                )
+                            },
+                            modifier = Modifier.weight(1f),
+                            enabled = viewModel.hasUSBDevices()
+                        ) {
+                            Text("Standard", style = MaterialTheme.typography.bodySmall)
+                        }
+                    }
+                    
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.spacedBy(8.dp)
+                    ) {
+                        Button(
+                            onClick = {
+                                // Gateway mode: Mic for TX, USB output for RX
+                                val (txDevice, rxDevice) = viewModel.getRecommendedGatewayDevices()
+                                viewModel.updateAudioSettings(
+                                    audioSettings.copy(
+                                        audioDevices = audioSettings.audioDevices.copy(
+                                            txDeviceId = txDevice?.id ?: -1,
+                                            rxDeviceId = rxDevice?.id ?: -1,
+                                            txDeviceName = txDevice?.getDisplayName() ?: "",
+                                            rxDeviceName = rxDevice?.getDisplayName() ?: "",
+                                            preferSeparateDevices = true
+                                        )
+                                    )
+                                )
+                            },
+                            modifier = Modifier.weight(1f),
+                            enabled = viewModel.hasUSBDevices()
+                        ) {
+                            Text("Gateway", style = MaterialTheme.typography.bodySmall)
+                        }
+                        
+                        Button(
+                            onClick = {
+                                // Full USB mode: USB for both TX and RX
+                                val (txDevice, rxDevice) = viewModel.getRecommendedFullUSBDevices()
+                                viewModel.updateAudioSettings(
+                                    audioSettings.copy(
+                                        audioDevices = audioSettings.audioDevices.copy(
+                                            txDeviceId = txDevice?.id ?: -1,
+                                            rxDeviceId = rxDevice?.id ?: -1,
+                                            txDeviceName = txDevice?.getDisplayName() ?: "",
+                                            rxDeviceName = rxDevice?.getDisplayName() ?: "",
+                                            preferSeparateDevices = true
+                                        )
+                                    )
+                                )
+                            },
+                            modifier = Modifier.weight(1f),
+                            enabled = viewModel.hasUSBDevices()
+                        ) {
+                            Text("Full USB", style = MaterialTheme.typography.bodySmall)
+                        }
+                    }
+                    
+                    // Configuration Explanations
+                    Card(
+                        colors = CardDefaults.cardColors(
+                            containerColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f)
+                        ),
+                        modifier = Modifier.fillMaxWidth()
+                    ) {
+                        Column(modifier = Modifier.padding(12.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                            Text(
+                                text = "� Configuration Modes",
+                                style = MaterialTheme.typography.titleSmall,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant
+                            )
+                            
+                            Text(
+                                text = "• Standard: USB mic for TX → Mumble, Speaker for RX from Mumble",
+                                style = MaterialTheme.typography.bodySmall,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant
+                            )
+                            
+                            Text(
+                                text = "• Gateway: Tablet mic for TX → USB out to Radio, USB in from Radio → Speaker",
+                                style = MaterialTheme.typography.bodySmall,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant
+                            )
+                            
+                            Text(
+                                text = "• Full USB: Both TX and RX via USB (requires multi-channel device)",
+                                style = MaterialTheme.typography.bodySmall,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant
+                            )
+                        }
+                    }
+                    
+                    // Tip
+                    Card(
+                        colors = CardDefaults.cardColors(
+                            containerColor = MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.5f)
+                        ),
+                        modifier = Modifier.fillMaxWidth()
+                    ) {
+                        Column(modifier = Modifier.padding(12.dp)) {
+                            Text(
+                                text = "💡 Tip",
+                                style = MaterialTheme.typography.titleSmall,
+                                color = MaterialTheme.colorScheme.onPrimaryContainer
+                            )
+                            Text(
+                                text = "Gateway mode is perfect for crossband/repeater setups where you relay Mumble audio to/from a radio.",
+                                style = MaterialTheme.typography.bodySmall,
+                                color = MaterialTheme.colorScheme.onPrimaryContainer
+                            )
+                        }
+                    }
+                }
+            }
+            
             // Serial PTT Hardware Settings
             Card(
                 modifier = Modifier.fillMaxWidth()

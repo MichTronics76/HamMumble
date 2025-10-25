@@ -50,13 +50,34 @@ public class HumlaSSLSocketFactory {
     public HumlaSSLSocketFactory(KeyStore keystore, String keystorePassword, String trustStorePath, String trustStorePassword, String trustStoreFormat) throws NoSuchAlgorithmException, KeyManagementException, KeyStoreException, UnrecoverableKeyException, NoSuchProviderException, IOException, CertificateException {
         mContext = SSLContext.getInstance("TLS");
 
-        KeyManagerFactory kmf = KeyManagerFactory.getInstance("X509");
-        kmf.init(keystore, keystorePassword != null ? keystorePassword.toCharArray() : new char[0]);
+        // Only initialize KeyManagerFactory if we have a client certificate
+        KeyManagerFactory kmf = null;
+        if (keystore != null) {
+            kmf = KeyManagerFactory.getInstance("X509");
+            kmf.init(keystore, keystorePassword != null ? keystorePassword.toCharArray() : new char[0]);
+            Log.i(TAG, "Initialized with client certificate");
+        } else {
+            Log.i(TAG, "No client certificate provided, connecting without one");
+        }
 
         if(trustStorePath != null) {
             KeyStore trustStore = KeyStore.getInstance(trustStoreFormat);
+            
+            // Check if trust store file exists, if not create an empty one
+            java.io.File trustStoreFile = new java.io.File(trustStorePath);
+            if (!trustStoreFile.exists()) {
+                Log.i(TAG, "Trust store does not exist, creating empty one at: " + trustStorePath);
+                // Create empty trust store
+                trustStore.load(null, trustStorePassword.toCharArray());
+                // Save it to file
+                java.io.FileOutputStream fos = new java.io.FileOutputStream(trustStorePath);
+                trustStore.store(fos, trustStorePassword.toCharArray());
+                fos.close();
+            }
+            
             FileInputStream fis = new FileInputStream(trustStorePath);
             trustStore.load(fis, trustStorePassword.toCharArray());
+            fis.close();
 
             TrustManagerFactory tmf = TrustManagerFactory.getInstance(TrustManagerFactory.getDefaultAlgorithm());
             tmf.init(trustStore);
@@ -67,7 +88,8 @@ public class HumlaSSLSocketFactory {
             Log.i(TAG, "Using system trust store");
         }
 
-        mContext.init(kmf.getKeyManagers(), new TrustManager[] { mTrustWrapper }, null);
+        // Pass null for KeyManagers if no certificate is provided (allows anonymous/guest connections)
+        mContext.init(kmf != null ? kmf.getKeyManagers() : null, new TrustManager[] { mTrustWrapper }, null);
     }
 
     /**

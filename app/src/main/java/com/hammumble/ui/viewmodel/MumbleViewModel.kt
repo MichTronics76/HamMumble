@@ -291,6 +291,27 @@ class MumbleViewModel : ViewModel() {
         service?.disconnectSerialPtt()
     }
     
+    // === Audio Device Routing Functions ===
+    
+    fun hasUSBDevices(): Boolean {
+        return service?.hasUSBDevices() ?: false
+    }
+    
+    fun getAvailableInputDevices() = 
+        service?.getAvailableInputDevices() ?: emptyList()
+    
+    fun getAvailableOutputDevices() = 
+        service?.getAvailableOutputDevices() ?: emptyList()
+    
+    fun getRecommendedSeparateDevices() = 
+        service?.getRecommendedSeparateDevices() ?: Pair(null, null)
+    
+    fun getRecommendedGatewayDevices() = 
+        service?.getRecommendedGatewayDevices() ?: Pair(null, null)
+    
+    fun getRecommendedFullUSBDevices() = 
+        service?.getRecommendedFullUSBDevices() ?: Pair(null, null)
+    
     // === Server Management Functions ===
     
     private fun loadSavedServers() {

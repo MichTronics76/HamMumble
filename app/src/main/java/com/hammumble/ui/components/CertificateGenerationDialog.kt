@@ -23,12 +23,13 @@ import kotlinx.coroutines.withContext
 @Composable
 fun CertificateGenerationDialog(
     onDismiss: () -> Unit,
-    onCertificateGenerated: (certificatePath: String, password: String) -> Unit
+    onCertificateGenerated: (certificatePath: String, password: String) -> Unit,
+    defaultCommonName: String = ""
 ) {
     val context = LocalContext.current
     val coroutineScope = rememberCoroutineScope()
     
-    var commonName by remember { mutableStateOf("") }
+    var commonName by remember { mutableStateOf(defaultCommonName) }
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
     var confirmPassword by remember { mutableStateOf("") }

@@ -19,6 +19,8 @@ package se.lublin.humla.audio;
 
 import android.media.AudioFormat;
 import android.media.AudioTrack;
+import android.media.AudioDeviceInfo;
+import android.os.Build;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Process;
@@ -274,6 +276,51 @@ public class AudioOutput implements Runnable, AudioOutputSpeech.TalkStateListene
     public void setOutputGain(float gain) {
         mOutputGain = Math.max(0.1f, Math.min(gain, 5.0f)); // Clamp between 0.1 and 5.0
         Log.v(TAG, "Output gain set to: " + mOutputGain);
+    }
+    
+    /**
+     * Set the preferred audio device for output (requires Android M+).
+     * This allows explicit routing to a specific audio device (e.g., built-in speaker)
+     * to prevent automatic routing that could cause TX/RX crosstalk with USB audio.
+     * 
+     * @param deviceInfo The AudioDeviceInfo to use for output, or null to use system default
+     * @return true if the device was set successfully, false otherwise
+     */
+    public boolean setPreferredDevice(AudioDeviceInfo deviceInfo) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            if (mAudioTrack != null) {
+                boolean success = mAudioTrack.setPreferredDevice(deviceInfo);
+                if (success && deviceInfo != null) {
+                    Log.i(TAG, "Set preferred output device: " + deviceInfo.getProductName() + 
+                          " (Type: " + deviceInfo.getType() + ", ID: " + deviceInfo.getId() + ")");
+                } else if (success) {
+                    Log.i(TAG, "Reset output device to system default");
+                } else {
+                    Log.w(TAG, "Failed to set preferred output device");
+                }
+                return success;
+            } else {
+                Log.w(TAG, "Cannot set preferred device: AudioTrack not initialized");
+                return false;
+            }
+        } else {
+            Log.w(TAG, "setPreferredDevice requires Android M (API 23) or higher");
+            return false;
+        }
+    }
+    
+    /**
+     * Get the currently routed audio device (requires Android M+).
+     * 
+     * @return The currently active AudioDeviceInfo, or null if unknown
+     */
+    public AudioDeviceInfo getRoutedDevice() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            if (mAudioTrack != null) {
+                return mAudioTrack.getRoutedDevice();
+            }
+        }
+        return null;
     }
 
     public static interface AudioOutputListener {

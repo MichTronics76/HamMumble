@@ -333,12 +333,12 @@ fun ServerConnectionScreen(
                     verticalArrangement = Arrangement.spacedBy(16.dp)
                 ) {
                     Text(
-                        text = "Client Certificate (Optional)",
+                        text = "Client Certificate",
                         style = MaterialTheme.typography.headlineSmall
                     )
                     
                     Text(
-                        text = "Some servers require a client certificate (.p12/.pfx) for authentication.",
+                        text = "A unique certificate will be generated automatically using your username. You can also select or generate a custom certificate below.",
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
@@ -433,8 +433,15 @@ fun ServerConnectionScreen(
                             onClick = { showCertificateGenerationDialog = true },
                             modifier = Modifier.fillMaxWidth()
                         ) {
-                            Text("Generate New Certificate")
+                            Text("Generate Custom Certificate")
                         }
+                        
+                        Text(
+                            text = "Note: If you don't select a certificate, a unique one will be generated automatically using your username when you connect.",
+                            style = MaterialTheme.typography.bodySmall,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            modifier = Modifier.padding(top = 8.dp)
+                        )
                     }
                 }
             }
@@ -477,29 +484,72 @@ fun ServerConnectionScreen(
             Button(
                 onClick = {
                     if (serverAddress.isNotBlank() && username.isNotBlank()) {
-                        val serverInfo = ServerInfo(
-                            address = serverAddress.trim(),
-                            port = port.toIntOrNull() ?: 64738,
-                            username = username.trim(),
-                            password = password,
-                            name = serverName.takeIf { it.isNotBlank() } ?: serverAddress,
-                            autoConnect = autoConnect,
-                            autoJoinChannel = autoJoinChannel.trim(),
-                            clientCertificatePath = certificatePath,
-                            clientCertificatePassword = certificatePassword,
-                            registerWithServer = registerWithServer,
-                            skipCertificateVerification = skipCertificateVerification
-                        )
-                        
-                        // Save the server for future use
-                        viewModel?.saveServer(serverInfo)
-                        
-                        if (isEditing) {
-                            // Just save and go back when editing
-                            onBack()
-                        } else {
-                            // Connect when adding new server
-                            onConnect(serverInfo)
+                        coroutineScope.launch {
+                            // Generate a unique certificate if none exists
+                            var finalCertPath = certificatePath
+                            var finalCertPassword = certificatePassword
+                            
+                            if (finalCertPath == null) {
+                                Toast.makeText(
+                                    context,
+                                    "Generating unique certificate for ${username.trim()}...",
+                                    Toast.LENGTH_SHORT
+                                ).show()
+                                
+                                // Generate with username as common name and a secure random password
+                                val autoPassword = java.util.UUID.randomUUID().toString().substring(0, 16)
+                                finalCertPath = kotlinx.coroutines.withContext(kotlinx.coroutines.Dispatchers.IO) {
+                                    CertificateManager.generateCertificate(
+                                        context = context,
+                                        commonName = username.trim(),
+                                        email = "",
+                                        password = autoPassword
+                                    )
+                                }
+                                finalCertPassword = autoPassword
+                                
+                                if (finalCertPath != null) {
+                                    certificatePath = finalCertPath
+                                    certificatePassword = finalCertPassword
+                                    Toast.makeText(
+                                        context,
+                                        "✓ Generated unique certificate for ${username.trim()}",
+                                        Toast.LENGTH_SHORT
+                                    ).show()
+                                } else {
+                                    Toast.makeText(
+                                        context,
+                                        "⚠ Failed to generate certificate",
+                                        Toast.LENGTH_LONG
+                                    ).show()
+                                    return@launch
+                                }
+                            }
+                            
+                            val serverInfo = ServerInfo(
+                                address = serverAddress.trim(),
+                                port = port.toIntOrNull() ?: 64738,
+                                username = username.trim(),
+                                password = password,
+                                name = serverName.takeIf { it.isNotBlank() } ?: serverAddress,
+                                autoConnect = autoConnect,
+                                autoJoinChannel = autoJoinChannel.trim(),
+                                clientCertificatePath = finalCertPath,
+                                clientCertificatePassword = finalCertPassword,
+                                registerWithServer = registerWithServer,
+                                skipCertificateVerification = skipCertificateVerification
+                            )
+                            
+                            // Save the server for future use
+                            viewModel?.saveServer(serverInfo)
+                            
+                            if (isEditing) {
+                                // Just save and go back when editing
+                                onBack()
+                            } else {
+                                // Connect when adding new server
+                                onConnect(serverInfo)
+                            }
                         }
                     }
                 },
@@ -520,6 +570,7 @@ fun ServerConnectionScreen(
     if (showCertificateGenerationDialog) {
         CertificateGenerationDialog(
             onDismiss = { showCertificateGenerationDialog = false },
+            defaultCommonName = username.trim(),
             onCertificateGenerated = { path, certPassword ->
                 certificatePath = path
                 certificatePassword = certPassword

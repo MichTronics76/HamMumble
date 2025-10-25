@@ -17,6 +17,7 @@ import android.util.Log
 import androidx.core.app.NotificationCompat
 import com.hammumble.MumbleApplication
 import com.hammumble.R
+import com.hammumble.audio.AudioDeviceManager
 import com.hammumble.audio.MumbleRogerBeepGenerator
 import com.hammumble.audio.RogerBeepGenerator
 import com.hammumble.audio.VoxPreToneGenerator
@@ -115,6 +116,9 @@ class MumbleService : Service() {
     
     // Serial PTT manager for hardware PTT
     private var serialPttManager: SerialPttManager? = null
+    
+    // Audio device manager for separate TX/RX routing
+    private var audioDeviceManager: AudioDeviceManager? = null
     
     // Roger beep generator for local audio feedback
     private var rogerBeepGenerator: RogerBeepGenerator? = null
@@ -773,6 +777,9 @@ class MumbleService : Service() {
         // Load saved audio settings
         loadAudioSettings()
         
+        // Initialize Audio Device Manager
+        audioDeviceManager = AudioDeviceManager(this)
+        
         // Initialize Serial PTT Manager
         serialPttManager = SerialPttManager(this)
         
@@ -1083,19 +1090,68 @@ class MumbleService : Service() {
                     android.util.Log.d("MumbleService", "Skipping certificate verification (no trust store)")
                 }
                 
-                // Add client certificate if configured
+                // Add client certificate - generate unique one if not configured
                 android.util.Log.d("MumbleService", "Certificate path from serverInfo: ${serverInfo.clientCertificatePath}")
-                if (serverInfo.clientCertificatePath != null && serverInfo.clientCertificatePath.isNotEmpty()) {
-                    val certificateBytes = com.hammumble.util.CertificateManager.readCertificate(serverInfo.clientCertificatePath)
+                var certPath = serverInfo.clientCertificatePath
+                var certPassword = serverInfo.clientCertificatePassword
+                
+                // If no certificate configured, generate a unique one based on username
+                if (certPath == null || certPath.isEmpty()) {
+                    android.util.Log.i("MumbleService", "No certificate configured, generating unique certificate for user: ${serverInfo.username}")
+                    
+                    // Generate certificate with username as CN and auto-generated password
+                    val autoPassword = java.util.UUID.randomUUID().toString().substring(0, 16)
+                    certPath = com.hammumble.util.CertificateManager.generateCertificate(
+                        context = this@MumbleService,
+                        commonName = serverInfo.username,
+                        email = "",
+                        password = autoPassword
+                    )
+                    certPassword = autoPassword
+                    
+                    if (certPath != null) {
+                        android.util.Log.i("MumbleService", "✓ Generated unique certificate: ${com.hammumble.util.CertificateManager.getFileName(certPath)}")
+                        
+                        // Update the server info in SharedPreferences with the new certificate
+                        try {
+                            val prefs = getSharedPreferences("hammumble_servers", Context.MODE_PRIVATE)
+                            val serversJson = prefs.getString("servers", "[]") ?: "[]"
+                            val jsonArray = org.json.JSONArray(serversJson)
+                            
+                            // Find and update matching server
+                            for (i in 0 until jsonArray.length()) {
+                                val jsonObj = jsonArray.getJSONObject(i)
+                                if (jsonObj.getString("address") == serverInfo.address && 
+                                    jsonObj.optInt("port", 64738) == serverInfo.port) {
+                                    // Update certificate info
+                                    jsonObj.put("clientCertificatePath", certPath)
+                                    jsonObj.put("clientCertificatePassword", certPassword)
+                                    android.util.Log.i("MumbleService", "✓ Updated server config with generated certificate")
+                                    break
+                                }
+                            }
+                            
+                            // Save back to preferences
+                            prefs.edit().putString("servers", jsonArray.toString()).apply()
+                        } catch (e: Exception) {
+                            android.util.Log.e("MumbleService", "Failed to update server with certificate", e)
+                        }
+                    } else {
+                        android.util.Log.e("MumbleService", "Failed to generate certificate for ${serverInfo.username}")
+                    }
+                }
+                
+                if (certPath != null && certPath.isNotEmpty()) {
+                    val certificateBytes = com.hammumble.util.CertificateManager.readCertificate(certPath)
                     if (certificateBytes != null) {
                         connectIntent.putExtra(HumlaService.EXTRAS_CERTIFICATE, certificateBytes)
-                        connectIntent.putExtra(HumlaService.EXTRAS_CERTIFICATE_PASSWORD, serverInfo.clientCertificatePassword)
-                        android.util.Log.i("MumbleService", "✓ Using client certificate: ${com.hammumble.util.CertificateManager.getFileName(serverInfo.clientCertificatePath)}")
+                        connectIntent.putExtra(HumlaService.EXTRAS_CERTIFICATE_PASSWORD, certPassword)
+                        android.util.Log.i("MumbleService", "✓ Using client certificate: ${com.hammumble.util.CertificateManager.getFileName(certPath)}")
                     } else {
-                        android.util.Log.w("MumbleService", "Failed to read client certificate file: ${serverInfo.clientCertificatePath}")
+                        android.util.Log.w("MumbleService", "Failed to read client certificate file: $certPath")
                     }
                 } else {
-                    android.util.Log.w("MumbleService", "No client certificate configured for this server")
+                    android.util.Log.w("MumbleService", "No valid client certificate available")
                 }
                 
                 startService(connectIntent)
@@ -1587,6 +1643,9 @@ class MumbleService : Service() {
                 }
             }
             
+            // Apply audio device routing settings
+            applyAudioDeviceSettings(settings.audioDevices)
+            
             humlaSession?.let { session ->
                 // Update talking state based on mode
                 when (settings.transmissionMode) {
@@ -1888,6 +1947,119 @@ class MumbleService : Service() {
      * Check if serial PTT is connected
      */
     fun isSerialPttConnected() = serialPttManager?.isConnected() ?: false
+    
+    // ========== Audio Device Management ==========
+    
+    /**
+     * Get all available input devices (microphones)
+     */
+    fun getAvailableInputDevices(): List<AudioDeviceManager.AudioDevice> {
+        return audioDeviceManager?.getInputDevices() ?: emptyList()
+    }
+    
+    /**
+     * Get all available output devices (speakers)
+     */
+    fun getAvailableOutputDevices(): List<AudioDeviceManager.AudioDevice> {
+        return audioDeviceManager?.getOutputDevices() ?: emptyList()
+    }
+    
+    /**
+     * Apply audio device settings for separate TX/RX routing
+     */
+    fun applyAudioDeviceSettings(deviceSettings: AudioDeviceSettings) {
+        val humlaService = humlaService ?: run {
+            android.util.Log.w("MumbleService", "Cannot apply audio device settings: HumlaService not available")
+            return
+        }
+        
+        if (humlaService !is HumlaService) {
+            android.util.Log.w("MumbleService", "Cannot apply audio device settings: Service is not HumlaService instance")
+            return
+        }
+        
+        android.util.Log.i("MumbleService", "Applying audio device settings - TX: ${deviceSettings.txDeviceId}, RX: ${deviceSettings.rxDeviceId}")
+        
+        // Set TX device (input)
+        if (deviceSettings.txDeviceId >= 0) {
+            val txDeviceInfo = audioDeviceManager?.getAudioDeviceInfo(deviceSettings.txDeviceId, isInput = true)
+            if (txDeviceInfo != null) {
+                val success = humlaService.setPreferredInputDevice(txDeviceInfo)
+                if (success) {
+                    android.util.Log.i("MumbleService", "TX device set successfully: ${deviceSettings.txDeviceName}")
+                } else {
+                    android.util.Log.w("MumbleService", "Failed to set TX device")
+                }
+            } else {
+                android.util.Log.w("MumbleService", "TX device not found: ${deviceSettings.txDeviceId}")
+            }
+        } else {
+            // Reset to default
+            humlaService.setPreferredInputDevice(null)
+            android.util.Log.i("MumbleService", "TX device reset to system default")
+        }
+        
+        // Set RX device (output)
+        if (deviceSettings.rxDeviceId >= 0) {
+            val rxDeviceInfo = audioDeviceManager?.getAudioDeviceInfo(deviceSettings.rxDeviceId, isInput = false)
+            if (rxDeviceInfo != null) {
+                val success = humlaService.setPreferredOutputDevice(rxDeviceInfo)
+                if (success) {
+                    android.util.Log.i("MumbleService", "RX device set successfully: ${deviceSettings.rxDeviceName}")
+                } else {
+                    android.util.Log.w("MumbleService", "Failed to set RX device")
+                }
+            } else {
+                android.util.Log.w("MumbleService", "RX device not found: ${deviceSettings.rxDeviceId}")
+            }
+        } else {
+            // Reset to default
+            humlaService.setPreferredOutputDevice(null)
+            android.util.Log.i("MumbleService", "RX device reset to system default")
+        }
+        
+        // Log all available devices for debugging
+        audioDeviceManager?.logAllDevices()
+        
+        // Log currently routed devices
+        val currentTxDevice = humlaService.getRoutedInputDevice()
+        val currentRxDevice = humlaService.getRoutedOutputDevice()
+        android.util.Log.i("MumbleService", "Currently routed TX device: ${currentTxDevice?.productName ?: "Unknown"} (Type: ${currentTxDevice?.type})")
+        android.util.Log.i("MumbleService", "Currently routed RX device: ${currentRxDevice?.productName ?: "Unknown"} (Type: ${currentRxDevice?.type})")
+    }
+    
+    /**
+     * Get recommended separate devices for TX and RX (standard mode)
+     */
+    fun getRecommendedSeparateDevices(): Pair<AudioDeviceManager.AudioDevice?, AudioDeviceManager.AudioDevice?> {
+        return audioDeviceManager?.getRecommendedSeparateDevices() ?: Pair(null, null)
+    }
+    
+    /**
+     * Get recommended configuration for gateway/crossband mode
+     * TX: Built-in mic → Mumble → USB OUTPUT → Radio
+     * RX: Radio → USB INPUT → Mumble → Built-in speaker
+     */
+    fun getRecommendedGatewayDevices(): Pair<AudioDeviceManager.AudioDevice?, AudioDeviceManager.AudioDevice?> {
+        return audioDeviceManager?.getRecommendedGatewayDevices() ?: Pair(null, null)
+    }
+    
+    /**
+     * Get recommended configuration for full USB mode
+     * Both TX and RX via USB device
+     */
+    fun getRecommendedFullUSBDevices(): Pair<AudioDeviceManager.AudioDevice?, AudioDeviceManager.AudioDevice?> {
+        return audioDeviceManager?.getRecommendedFullUSBDevices() ?: Pair(null, null)
+    }
+    
+    /**
+     * Check if USB audio devices are connected
+     */
+    fun hasUSBDevices(): Boolean {
+        return audioDeviceManager?.hasUSBDevices() ?: false
+    }
+    
+    // ========== Volume Management ==========
     
     /**
      * Set system volume to maximum for VOICE_CALL stream (used by VoIP apps)
